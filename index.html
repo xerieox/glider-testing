@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glider Studies | Fluid Dynamics & Aviation Research</title>
+    <style>
+        :root {
+            --primary: #1e3a5f; /* Deep Navy */
+            --accent: #26b1a5;  /* Logo Teal */
+            --bg: #ffffff;
+            --text: #333;
+            --light-gray: #f8f9fa;
+        }
+
+        body, html { margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; color: var(--text); background: var(--bg); overflow-x: hidden; }
+
+        /* --- DECOY NAVIGATION --- */
+        nav { background: var(--primary); padding: 15px 10%; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 5px solid var(--accent); }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-area img { height: 50px; filter: brightness(1.2); }
+        .nav-links { display: flex; gap: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a { color: white; text-decoration: none; cursor: pointer; }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* --- DECOY CONTENT --- */
+        .hero { padding: 60px 10%; background: var(--light-gray); }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 10px; color: var(--primary); }
+        .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; padding: 40px 10%; }
+        .article-block { line-height: 1.8; font-size: 1.1rem; }
+        .sidebar-block { border: 1px solid #ddd; padding: 20px; background: #fff; }
+        .sidebar-block h3 { margin-top: 0; color: var(--accent); border-bottom: 2px solid var(--accent); }
+
+        /* --- THE ARCHIVE UI --- */
+        #archive-ui { display: none; padding: 40px 5%; background: #0b1622; min-height: 100vh; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        .archive-header-block { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1e3a5f; padding-bottom: 20px; margin-bottom: 10px; }
+        .archive-header-logo { height: 65px; filter: brightness(1.1); cursor: pointer; transition: transform 0.2s; }
+        .archive-header-logo:hover { transform: scale(1.05); }
+
+        .section-heading { color: var(--accent); font-size: 1.8rem; letter-spacing: 2px; margin: 40px 0 20px 0; border-bottom: 2px solid #1e3a5f; padding-bottom: 8px; text-transform: uppercase; font-weight: bold;}
+        
+        .archive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 25px; margin-bottom: 40px;}
+        
+        .link-bubble { 
+            background: #162431; border: 1px solid #2d4154; border-radius: 8px; padding: 20px 20px 20px 55px; 
+            transition: transform 0.2s; position: relative; display: flex; flex-direction: column; overflow: hidden;
+        }
+        .link-bubble:hover { transform: translateY(-3px); border-color: var(--accent); }
+        
+        .category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 1.2rem;}
+        .discord-icon { height: 20px; opacity: 0.6; transition: 0.3s; }
+        .discord-icon:hover { opacity: 1; filter: drop-shadow(0 0 5px #5865F2); }
+
+        /* --- VERTICAL BADGE ON LEFT --- */
+        .vertical-badge {
+            position: absolute; left: 0; top: 0; bottom: 0; width: 35px;
+            background: #101b26; border-right: 1px solid #2d4154;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .vertical-badge-text {
+            transform: rotate(-90deg); white-space: nowrap; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 2px; color: #7f8c8d; font-weight: bold;
+        }
+        .link-bubble:hover .vertical-badge-text { color: var(--accent); }
+
+        /* --- LINK BLOCK CONTEXT --- */
+        .link-row-container {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+            background: #0b1622; border: 1px solid #1e3a5f; border-radius: 4px;
+            padding: 8px 10px; overflow: hidden; position: relative;
+        }
+
+        .mirror-row { 
+            flex-grow: 1; overflow: hidden; position: relative; 
+            text-decoration: none; color: var(--accent); white-space: nowrap; display: block;
+            cursor: pointer;
+        }
+        
+        .url-text {
+            display: inline-block; filter: blur(6px); transition: filter 0.3s; padding-left: 0;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .mirror-row:hover .url-text {
+            filter: blur(0px);
+            animation: constant-scroll var(--scroll-duration, 4s) linear forwards;
+        }
+
+        @keyframes constant-scroll {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(var(--scroll-distance, 0px), 0, 0); }
+        }
+
+        /* --- BADGES --- */
+        .status-badge { font-size: 0.65rem; text-transform: uppercase; padding: 3px 6px; border-radius: 3px; font-weight: bold; white-space: nowrap; background: #2d4154; color: #bdc3c7; z-index: 2; }
+        .status-badge.online { background: #2ecc71; color: #fff; }
+        .status-badge.working { background: #f1c40f; color: #000; }
+
+        /* --- ARCHIVE FOOTER --- */
+        .archive-footer {
+            margin-top: 60px; padding: 30px 0; border-top: 1px solid #1e3a5f;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+            opacity: 0.5; font-size: 0.85rem; letter-spacing: 1px; color: #7f8c8d;
+        }
+        .archive-footer img { height: 40px; filter: grayscale(1) brightness(1.2); transition: filter 0.3s; cursor: pointer; }
+        .archive-footer:hover img { filter: grayscale(0) brightness(1.1); }
+
+        #kill-notice { position: fixed; bottom: 10px; left: 10px; font-size: 0.7rem; color: rgba(0,0,0,0.2); z-index: 9999; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div id="decoy-ui">
+        <nav>
+            <div class="logo-area">
+                <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" alt="Logo">
+                <span>Glider Studies Group</span>
+            </div>
+            <div class="nav-links">
+                <a>Publications</a>
+                <a>Wind Tunnel Data</a>
+                <a onclick="showArchive()" id="entry-point">Research Archive</a>
+                <a>About Us</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <h1>Advanced Lift Distribution Systems</h1>
+            <p>Exploring the intersection of fluid mechanics and unpowered structural integrity.</p>
+        </section>
+
+        <div class="main-grid">
+            <div class="article-block">
+                <h2>The 2026 Albatross Study</h2>
+                <p>New observations in avian gliding suggest that wingtip vortices play a larger role in energy conservation than previously modeled. By adjusting the dihedral angle of synthetic composite wings, we can achieve a 12% increase in glide ratio...</p>
+                <p>Experimental data collected from the Dublin test site confirms that thermal lift is maximized when surface temperature differentials exceed 4.5 degrees Celsius.</p>
+            </div>
+            <div class="sidebar-block">
+                <h3>Latest Metrics</h3>
+                <ul>
+                    <li>Reynolds Number: 4.5e5</li>
+                    <li>Camber Variance: 0.02</li>
+                    <li>Drag Coefficient: 0.015</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="archive-ui">
+        <div class="archive-header-block">
+            <div id="header-mount"></div>
+            <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" class="archive-header-logo" onclick="showHome()" alt="Glider Studies Asset">
+        </div>
+        
+        <div class="section-heading" id="proxy-title-mount"></div>
+        <div class="archive-grid" id="proxies-container"></div>
+        
+        <div class="section-heading" id="game-title-mount"></div>
+        <div class="archive-grid" id="games-container"></div>
+
+        <footer class="archive-footer">
+            <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" onclick="showHome()" alt="Glider Studies Footer Logo">
+            <div>Glider Studies Internal Index Terminal &copy; 2026</div>
+        </footer>
+    </div>
+
+    <div id="kill-notice">Shift+K to Terminate Session</div>
+
+    <script>
+        const safeDecode = (str) => atob(str);
+
+        document.getElementById('header-mount').innerHTML = `<h1>${safeDecode('SW50ZXJuYWwgUmVzZWFyY2ggRGF0YWJhc2U=')}</h1><p style="opacity: 0.7; margin-top: -10px;">${safeDecode('Q29uZmlkZW50aWFsIEFyY2hpdmUgYWNjZXNzZWQ=')}</p>`;
+        
+        document.getElementById('proxy-title-mount').innerText = "Proxies";
+        document.getElementById('game-title-mount').innerText = "Games";
+
+        const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyvaLgrLVFhevnLqlWfsLdPaQwkMmRbNDR1y2f0mD-jvM5a3qsuhWzMwKJMhWdPZI-orVG2nYAp59d/pub?output=csv";
+
+        function showArchive() {
+            document.getElementById('decoy-ui').style.display = 'none';
+            document.getElementById('archive-ui').style.display = 'block';
+            document.body.style.background = "#0b1622";
+        }
+
+        function showHome() {
+            document.getElementById('archive-ui').style.display = 'none';
+            document.getElementById('decoy-ui').style.display = 'block';
+            document.body.style.background = "#ffffff";
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.shiftKey && e.key === 'K') {
+                window.location.href = "https://dublin.schoology.com/";
+            }
+        });
+
+        async function fetchDataAndCloak() {
+            try {
+                const response = await fetch(csvURL);
+                const data = await response.text();
+                processData(data);
+                
+                if (window.top === window.self) {
+                    const targetBlankTab = window.open('about:blank', '_blank');
+                    if (targetBlankTab && !targetBlankTab.closed) {
+                        const targetDoc = targetBlankTab.document;
+                        targetDoc.open();
+                        targetDoc.write(document.documentElement.outerHTML);
+                        targetDoc.close();
+                        
+                        window.location.replace("https://dublin.schoology.com/");
+                    }
+                }
+            } catch (err) {
+                console.error("Transmission breakdown.");
+            }
+        }
+
+        function processData(csv) {
+            const rows = csv.split('\n').slice(1);
+            const groups = {};
+
+            rows.forEach(row => {
+                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                if (cols.length >= 2) {
+                    const name = cols[0].trim().replace(/"/g, '');
+                    const url = cols[1].trim().replace(/"/g, '');
+                    const rawType = cols[2] ? cols[2].trim().replace(/"/g, '').toLowerCase() : "proxy"; 
+                    const status = cols[3] ? cols[3].trim().replace(/"/g, '') : "";
+                    const discord = cols[4] && cols[4].trim() !== "" ? cols[4].replace(/"/g, '') : null;
+
+                    if (!groups[name]) {
+                        groups[name] = { links: [], discord: discord, type: rawType };
+                    }
+                    groups[name].links.push({ url, status });
+                }
+            });
+
+            renderUI(groups);
+        }
+
+        // --- REWRITTEN FOR IN-PLACE SAME-TAB EMBEDDING ---
+        function openInSameTabFrame(targetUrl) {
+            // Apply full screen resets to clear layout spaces completely
+            document.body.innerHTML = "";
+            document.documentElement.style.width = "100%";
+            document.documentElement.style.height = "100%";
+            document.body.style.margin = "0";
+            document.body.style.padding = "0";
+            document.body.style.width = "100%";
+            document.body.style.height = "100%";
+            document.body.style.overflow = "hidden";
+            document.body.style.background = "#fff";
+
+            // Inject the clean layout directly onto the document tab
+            const targetIFrame = document.createElement('iframe');
+            targetIFrame.src = targetUrl;
+            targetIFrame.style.border = "none";
+            targetIFrame.style.width = "100%";
+            targetIFrame.style.height = "100%";
+            targetIFrame.style.display = "block";
+
+            document.body.appendChild(targetIFrame);
+        }
+
+        function renderUI(groups) {
+            const proxyBox = document.getElementById('proxies-container');
+            const gameBox = document.getElementById('games-container');
+            proxyBox.innerHTML = ""; 
+            gameBox.innerHTML = "";
+
+            for (const [name, data] of Object.entries(groups)) {
+                const bubble = document.createElement('div');
+                bubble.className = 'link-bubble';
+
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.innerHTML = `<strong>${name}</strong>`;
+
+                if (data.discord) {
+                    const dLink = document.createElement('a');
+                    dLink.href = data.discord;
+                    dLink.target = "_blank";
+                    dLink.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" class="discord-icon" alt="Server Portal">`;
+                    header.appendChild(dLink);
+                }
+                bubble.appendChild(header);
+
+                const verticalBar = document.createElement('div');
+                verticalBar.className = 'vertical-badge';
+                
+                const cleanTypeDisplay = (data.type === 'game' || data.type === 'games') ? 'games' : 'proxies';
+                verticalBar.innerHTML = `<div class="vertical-badge-text">${cleanTypeDisplay}</div>`;
+                bubble.appendChild(verticalBar);
+
+                data.links.forEach(linkItem => {
+                    const rowContainer = document.createElement('div');
+                    rowContainer.className = 'link-row-container';
+
+                    const row = document.createElement('a');
+                    row.className = 'mirror-row';
+                    
+                    row.onclick = (e) => {
+                        e.preventDefault();
+                        openInSameTabFrame(linkItem.url);
+                    };
+
+                    const span = document.createElement('span');
+                    span.className = 'url-text';
+                    span.innerText = linkItem.url;
+                    
+                    row.appendChild(span);
+                    rowContainer.appendChild(row);
+
+                    if (linkItem.status) {
+                        const badge = document.createElement('span');
+                        badge.className = 'status-badge';
+                        const cleanStatus = linkItem.status.toLowerCase();
+                        if (cleanStatus === 'online' || cleanStatus === 'active') badge.classList.add('online');
+                        if (cleanStatus === 'working') badge.classList.add('working');
+                        badge.innerText = linkItem.status;
+                        rowContainer.appendChild(badge);
+                    }
+
+                    bubble.appendChild(rowContainer);
+
+                    setTimeout(() => {
+                        const containerWidth = row.offsetWidth;
+                        const textWidth = span.offsetWidth;
+
+                        if (textWidth > containerWidth) {
+                            const overflowDistance = textWidth - containerWidth;
+                            const calculatedDuration = (overflowDistance / 50) + 's';
+                            
+                            span.style.setProperty('--scroll-distance', `-${overflowDistance}px`);
+                            span.style.setProperty('--scroll-duration', calculatedDuration);
+                        } else {
+                            span.style.animation = 'none';
+                        }
+                    }, 50);
+                });
+
+                if (cleanTypeDisplay === 'proxies') {
+                    proxyBox.appendChild(bubble);
+                } else {
+                    gameBox.appendChild(bubble);
+                }
+            }
+        }
+
+        fetchDataAndCloak();
+    </script>
+</body>
+</html>
