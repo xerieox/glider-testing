@@ -106,7 +106,27 @@
         .archive-footer img { height: 40px; filter: grayscale(1) brightness(1.2); transition: filter 0.3s; cursor: pointer; }
         .archive-footer:hover img { filter: grayscale(0) brightness(1.1); }
 
+        /* --- NOTICES AND POPUPS --- */
         #kill-notice { position: fixed; bottom: 10px; left: 10px; font-size: 0.7rem; color: rgba(0,0,0,0.2); z-index: 9999; pointer-events: none; }
+
+        .popup-banner {
+            position: fixed; bottom: 20px; right: 20px; background: #e74c3c; color: white;
+            padding: 12px 40px 12px 18px; border-radius: 6px; font-family: sans-serif;
+            font-size: 0.9rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 10000; display: none; align-items: center; border: 1px solid #c0392b;
+            animation: slideIn 0.3s ease-out;
+        }
+        .popup-banner .close-btn {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; font-size: 1.2rem; font-weight: bold; color: rgba(255,255,255,0.8);
+            line-height: 1; transition: color 0.2s;
+        }
+        .popup-banner .close-btn:hover { color: white; }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -166,6 +186,10 @@
     </div>
 
     <div id="kill-notice">Shift+K to Terminate Session</div>
+    <div id="pop-blocker-notice" class="popup-banner">
+        <span>Please allow Pop-ups for this site to work properly</span>
+        <span class="close-btn" onclick="closeNotice()">&times;</span>
+    </div>
 
     <script>
         const safeDecode = (str) => atob(str);
@@ -176,6 +200,14 @@
         document.getElementById('game-title-mount').innerText = "Games";
 
         const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyvaLgrLVFhevnLqlWfsLdPaQwkMmRbNDR1y2f0mD-jvM5a3qsuhWzMwKJMhWdPZI-orVG2nYAp59d/pub?output=csv";
+
+        function showNotice() {
+            document.getElementById('pop-blocker-notice').style.display = 'flex';
+        }
+
+        function closeNotice() {
+            document.getElementById('pop-blocker-notice').style.display = 'none';
+        }
 
         function showArchive() {
             document.getElementById('decoy-ui').style.display = 'none';
@@ -210,6 +242,9 @@
                         targetDoc.close();
                         
                         window.location.replace("https://dublin.schoology.com/");
+                    } else {
+                        // If blocked, show the manual notification banner
+                        showNotice();
                     }
                 }
             } catch (err) {
@@ -240,9 +275,7 @@
             renderUI(groups);
         }
 
-        // --- REWRITTEN FOR IN-PLACE SAME-TAB EMBEDDING ---
         function openInSameTabFrame(targetUrl) {
-            // Apply full screen resets to clear layout spaces completely
             document.body.innerHTML = "";
             document.documentElement.style.width = "100%";
             document.documentElement.style.height = "100%";
@@ -253,7 +286,6 @@
             document.body.style.overflow = "hidden";
             document.body.style.background = "#fff";
 
-            // Inject the clean layout directly onto the document tab
             const targetIFrame = document.createElement('iframe');
             targetIFrame.src = targetUrl;
             targetIFrame.style.border = "none";
