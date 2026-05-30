@@ -126,35 +126,75 @@
         @keyframes slideIn {
             from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
+        }
 
-            /* --- CONTRIBUTE BUTTON --- */
-        .contribute-btn {
+        /* --- HEADER BUTTON CLUSTER --- */
+        .header-btn-cluster {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .btn-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .arch-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: 999px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease-in-out;
+            white-space: nowrap;
+        }
+        .arch-btn.contribute {
+            background: var(--accent);
+            color: #0b1622;
+            box-shadow: 0 2px 10px rgba(38,177,165,0.25);
+        }
+        .arch-btn.contribute:hover {
+            background: #2ecfc2;
+            box-shadow: 0 4px 18px rgba(38,177,165,0.45);
+            transform: translateY(-2px);
+        }
+        .arch-btn.contribute:active { transform: translateY(0); }
+        .arch-btn.help {
             background: transparent;
             color: var(--accent);
-            border: 2px solid var(--accent);
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
+            border: 2px solid rgba(38,177,165,0.5);
         }
-
-        .contribute-btn:hover {
-            background: var(--accent);
-            color: #0b1622; /* Matches the dark background */
-            box-shadow: 0 0 10px rgba(38, 177, 165, 0.4);
-            transform: translateY(-1px);
+        .arch-btn.help:hover {
+            background: rgba(38,177,165,0.08);
+            border-color: var(--accent);
+            transform: translateY(-2px);
         }
-
-        .contribute-btn:active {
-            transform: translateY(1px);
+        .arch-btn.help:active { transform: translateY(0); }
+        .arch-btn.refresh {
+            background: #162431;
+            color: #8fa8be;
+            border: 1px solid #2d4154;
+            align-self: stretch;
+            height: auto;
+            font-size: 0.78rem;
         }
+        .arch-btn.refresh:hover {
+            background: #1e3347;
+            color: var(--accent);
+            border-color: var(--accent);
+            transform: translateY(-2px);
         }
+        .arch-btn.refresh:active { transform: translateY(0); }
+        .arch-btn.refresh.loading { opacity: 0.55; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -198,8 +238,14 @@
     <div id="archive-ui">
         <div class="archive-header-block">
             <div id="header-mount"></div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <a href="https://forms.office.com/r/zGnP2D6Anb" target="_blank" class="contribute-btn">Contribute or Report Block</a>
+            <div class="header-btn-cluster">
+                <!-- Refresh on the left -->
+                <button class="arch-btn refresh" onclick="reloadData()" id="reload-btn">↻ Refresh Archive</button>
+                <!-- Contribute + Help stacked on the right -->
+                <div class="btn-stack">
+                    <a href="https://forms.office.com/r/zGnP2D6Anb" target="_blank" class="arch-btn contribute">✦ Contribute</a>
+                    <a href="https://forms.office.com/r/zGnP2D6Anb" target="_blank" class="arch-btn help">? Help / Report Block</a>
+                </div>
                 <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" class="archive-header-logo" onclick="showHome()" alt="Glider Studies Asset">
             </div>
         </div>
@@ -228,7 +274,7 @@
     <script>
         const safeDecode = (str) => atob(str);
 
-        document.getElementById('header-mount').innerHTML = `<h1>${safeDecode('SW50ZXJuYWwgUmVzZWFyY2ggRGF0YWJhc2U=')}</h1><p style="opacity: 0.7; margin-top: -10px;">${safeDecode('Q29uZmlkZW50aWFsIEFyY2hpdmUgYWNjZXNzZWQ=')}</p>`;
+        document.getElementById('header-mount').innerHTML = `<h1>${safeDecode('UmVzZWFyY2ggRGF0YWJhc2U=')}</h1><p style="opacity: 0.7; margin-top: -10px;">Killswitch: <strong>SHIFT+K</strong></p><p style="opacity: 0.45; margin-top: -8px; font-size: 0.8rem;">This archive is based off GoGuardian &mdash; The Killswitch redirects to Schoology.</p>`;
         
         document.getElementById('proxy-title-mount').innerText = "Proxies";
         document.getElementById('game-title-mount').innerText = "Games";
@@ -420,6 +466,19 @@
                     entertainmentBox.appendChild(bubble);
                 }
             }
+        }
+
+        async function reloadData() {
+            const btn = document.getElementById('reload-btn');
+            btn.classList.add('loading');
+            btn.innerText = '↻ Refreshing...';
+            try {
+                const response = await fetch(csvURL);
+                const data = await response.text();
+                processData(data);
+            } catch (err) { console.error("Reload failed."); }
+            btn.classList.remove('loading');
+            btn.innerText = '↻ Refresh Archive';
         }
 
         fetchDataAndCloak();
