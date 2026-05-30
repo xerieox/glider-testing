@@ -126,6 +126,34 @@
         @keyframes slideIn {
             from { transform: translateY(20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
+
+            /* --- CONTRIBUTE BUTTON --- */
+        .contribute-btn {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .contribute-btn:hover {
+            background: var(--accent);
+            color: #0b1622; /* Matches the dark background */
+            box-shadow: 0 0 10px rgba(38, 177, 165, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .contribute-btn:active {
+            transform: translateY(1px);
+        }
         }
     </style>
 </head>
@@ -170,7 +198,10 @@
     <div id="archive-ui">
         <div class="archive-header-block">
             <div id="header-mount"></div>
-            <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" class="archive-header-logo" onclick="showHome()" alt="Glider Studies Asset">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <a href="https://forms.office.com/r/zGnP2D6Anb" target="_blank" class="contribute-btn">Contribute or Report Block</a>
+                <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" class="archive-header-logo" onclick="showHome()" alt="Glider Studies Asset">
+            </div>
         </div>
         
         <div class="section-heading" id="proxy-title-mount"></div>
@@ -178,6 +209,9 @@
         
         <div class="section-heading" id="game-title-mount"></div>
         <div class="archive-grid" id="games-container"></div>
+        
+        <div class="section-heading" id="entertainment-title-mount"></div>
+        <div class="archive-grid" id="entertainment-container"></div>
 
         <footer class="archive-footer">
             <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" onclick="showHome()" alt="Glider Studies Footer Logo">
@@ -198,6 +232,7 @@
         
         document.getElementById('proxy-title-mount').innerText = "Proxies";
         document.getElementById('game-title-mount').innerText = "Games";
+        document.getElementById('entertainment-title-mount').innerText = "Entertainment";
 
         const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyvaLgrLVFhevnLqlWfsLdPaQwkMmRbNDR1y2f0mD-jvM5a3qsuhWzMwKJMhWdPZI-orVG2nYAp59d/pub?output=csv";
 
@@ -299,8 +334,10 @@
         function renderUI(groups) {
             const proxyBox = document.getElementById('proxies-container');
             const gameBox = document.getElementById('games-container');
+            const entertainmentBox = document.getElementById('entertainment-container');
             proxyBox.innerHTML = ""; 
             gameBox.innerHTML = "";
+            entertainmentBox.innerHTML = "";
 
             for (const [name, data] of Object.entries(groups)) {
                 const bubble = document.createElement('div');
@@ -322,7 +359,9 @@
                 const verticalBar = document.createElement('div');
                 verticalBar.className = 'vertical-badge';
                 
-                const cleanTypeDisplay = (data.type === 'game' || data.type === 'games') ? 'games' : 'proxies';
+                const cleanTypeDisplay = (data.type === 'game' || data.type === 'games') ? 'games' 
+                    : (data.type === 'entertainment') ? 'entertainment' 
+                    : 'proxies';
                 verticalBar.innerHTML = `<div class="vertical-badge-text">${cleanTypeDisplay}</div>`;
                 bubble.appendChild(verticalBar);
 
@@ -375,8 +414,10 @@
 
                 if (cleanTypeDisplay === 'proxies') {
                     proxyBox.appendChild(bubble);
-                } else {
+                } else if (cleanTypeDisplay === 'games') {
                     gameBox.appendChild(bubble);
+                } else {
+                    entertainmentBox.appendChild(bubble);
                 }
             }
         }
