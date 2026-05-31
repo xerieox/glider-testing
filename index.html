@@ -161,10 +161,15 @@
             100% { transform: translate3d(var(--scroll-distance, 0px), 0, 0); }
         }
 
-        /* --- BADGES --- */
-        .status-badge { font-size: 0.65rem; text-transform: uppercase; padding: 3px 6px; border-radius: 3px; font-weight: bold; white-space: nowrap; background: #2d4154; color: #bdc3c7; z-index: 2; }
-        .status-badge.online { background: #2ecc71; color: #fff; }
-        .status-badge.working { background: #f1c40f; color: #000; }
+     /* --- UPDATED BADGES --- */
+.status-badge { 
+    font-size: 0.65rem; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; 
+    font-weight: bold; white-space: nowrap; border: 1px solid transparent;
+}
+.status-badge.unknown { background: #2d4154; color: #95a5a6; border-color: #3e5871; }
+.status-badge.unblocked { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border-color: #2ecc71; }
+.status-badge.blocked { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border-color: #e74c3c; }
+.status-badge.inactive { background: rgba(241, 196, 15, 0.15); color: #f1c40f; border-color: #f1c40f; }
 
         /* --- NOTICES AND POPUPS --- */
         #kill-notice { position: fixed; bottom: 10px; left: 10px; font-size: 0.7rem; color: rgba(0,0,0,0.2); z-index: 9999; pointer-events: none; }
@@ -658,15 +663,27 @@
                     row.appendChild(span);
                     rowContainer.appendChild(row);
 
-                    if (linkItem.status) {
-                        const badge = document.createElement('span');
-                        badge.className = 'status-badge';
-                        const cleanStatus = linkItem.status.toLowerCase();
-                        if (cleanStatus === 'online' || cleanStatus === 'active') badge.classList.add('online');
-                        if (cleanStatus === 'working') badge.classList.add('working');
-                        badge.innerText = linkItem.status;
-                        rowContainer.appendChild(badge);
-                    }
+                    // Replace the existing badge creation logic in renderUI with this:
+if (linkItem.status) {
+    const badge = document.createElement('span');
+    badge.className = 'status-badge';
+    
+    const statusText = linkItem.status.toLowerCase().trim();
+    
+    // Assign class based on status text
+    if (statusText === 'unblocked') {
+        badge.classList.add('unblocked');
+    } else if (statusText === 'blocked') {
+        badge.classList.add('blocked');
+    } else if (statusText === 'inactive') {
+        badge.classList.add('inactive');
+    } else {
+        badge.classList.add('unknown');
+    }
+    
+    badge.innerText = linkItem.status;
+    rowContainer.appendChild(badge);
+}
 
                     bubble.appendChild(rowContainer);
 
