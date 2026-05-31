@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glider Studies | Fluid Dynamics & Aviation Research</title>
+    <title>Glider Studies</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/bwJRGJZJ/glider.png">
     <style>
         :root {
             --primary: #1e3a5f; /* Deep Navy */
@@ -710,5 +711,17 @@
 
         fetchDataAndCloak();
     </script>
+
+    <script>
+    // Force a "Stay on Page" prompt when attempting to close or refresh
+    window.addEventListener('beforeunload', function (e) {
+        // Cancel the event as standard
+        e.preventDefault();
+        // Chrome requires returnValue to be set
+        e.returnValue = '';
+        return '';
+    });
+</script>
+    
 </body>
 </html>
