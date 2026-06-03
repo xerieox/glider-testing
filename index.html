@@ -430,28 +430,6 @@
                 </div>
             </div>
         </div>
-    </div><div id="archive-ui">
-        <div class="archive-header-block">
-            <div id="header-mount"></div>
-            <div class="header-btn-cluster">
-                <button class="arch-btn refresh" onclick="reloadData()" id="reload-btn">↻ Refresh Archive</button>
-                <div class="btn-stack">
-                    <a href="https://forms.office.com/r/zGnP2D6Anb" target="_blank" class="arch-btn contribute">✦ Contribute</a>
-                    <a href="https://forms.office.com/r/zGnP2D6Anb" target="_blank" class="arch-btn help">? Help / Report Block</a>
-                </div>
-                <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" class="archive-header-logo" onclick="showHome()" alt="Glider Studies Asset">
-            </div>
-        </div>
-        
-        <div class="section-heading" id="proxy-title-mount"></div>
-        <div class="archive-grid" id="proxies-container"></div>
-        
-        <div class="section-heading" id="game-title-mount"></div>
-        <div class="archive-grid" id="games-container"></div>
-        
-        <div class="section-heading" id="entertainment-title-mount"></div>
-        <div class="archive-grid" id="entertainment-container"></div>
-
     </div>
 
     <footer class="decoy-footer">
@@ -486,6 +464,31 @@
             <span>Dublin, Ireland &mdash; gliderstudies.org</span>
         </div>
     </footer>
+    </div><!-- /#decoy-ui -->
+
+    <div id="archive-ui">
+        <div class="archive-header-block">
+            <div id="header-mount"></div>
+            <div class="header-btn-cluster">
+                <button class="arch-btn refresh" onclick="reloadData()" id="reload-btn">↻ Refresh Archive</button>
+                <div class="btn-stack">
+                    <a href="https://forms.office.com/r/zGnP2D6Anb" target="_blank" class="arch-btn contribute">✦ Contribute</a>
+                    <a href="https://forms.office.com/r/zGnP2D6Anb" target="_blank" class="arch-btn help">? Help / Report Block</a>
+                </div>
+                <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" class="archive-header-logo" onclick="showHome()" alt="Glider Studies Asset">
+            </div>
+        </div>
+        
+        <div class="section-heading" id="proxy-title-mount"></div>
+        <div class="archive-grid" id="proxies-container"></div>
+        
+        <div class="section-heading" id="game-title-mount"></div>
+        <div class="archive-grid" id="games-container"></div>
+        
+        <div class="section-heading" id="entertainment-title-mount"></div>
+        <div class="archive-grid" id="entertainment-container"></div>
+
+    </div>
 
     <div id="kill-notice">Shift+K to Terminate Session</div>
     <div id="pop-blocker-notice" class="popup-banner">
@@ -501,16 +504,7 @@
 
         const safeDecode = (str) => atob(str);
 
-        document.getElementById('header-mount').innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 5px;">
-                <h1 style="margin: 0;">${safeDecode('UmVzZWFyY2ggRGF0YWJhc2U=')}</h1>
-                <a href="https://discord.gg/mE6gwjXmxH" target="_blank" style="display: inline-flex; align-items: center; text-decoration: none;">
-                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png" alt="Discord" style="height: 22px; width: auto; opacity: 0.85; transition: opacity 0.2s, transform 0.2s;" onmouseover="this.style.opacity='1'; this.style.transform='scale(1.08)';" onmouseout="this.style.opacity='0.85'; this.style.transform='scale(1)';">
-                </a>
-            </div>
-            <p style="opacity: 0.7; margin-top: 0; margin-bottom: 4px;">Killswitch: <strong>SHIFT+K</strong></p>
-            <p style="opacity: 0.45; margin-top: 0; margin-bottom: 0; font-size: 0.8rem;">This archive is based off GoGuardian &mdash; The Killswitch redirects to Schoology.</p>
-        `;
+        document.getElementById('header-mount').innerHTML = `<div style="display:flex;align-items:center;gap:14px;"><h1 style="margin:0">${safeDecode('UmVzZWFyY2ggRGF0YWJhc2U=')}</h1><a href="https://discord.gg/mE6gwjXmxH" target="_blank" title="Join our Discord" style="display:inline-flex;align-items:center;flex-shrink:0;"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png" alt="Discord" style="height:28px;width:auto;opacity:0.85;transition:opacity 0.2s,transform 0.2s;" onmouseover="this.style.opacity='1';this.style.transform='scale(1.12)'" onmouseout="this.style.opacity='0.85';this.style.transform='scale(1)'"></a></div><p style="opacity: 0.7; margin-top: -10px;">Killswitch: <strong>SHIFT+K</strong></p><p style="opacity: 0.45; margin-top: -8px; font-size: 0.8rem;">This archive is based off GoGuardian &mdash; The Killswitch redirects to Schoology.</p>`;
         
         document.getElementById('proxy-title-mount').innerText = "Proxies";
         document.getElementById('game-title-mount').innerText = "Games";
@@ -560,6 +554,9 @@
                         decoyEl.style.cssText = 'display:none!important';
                         archiveEl.style.cssText = 'display:flex!important;flex-direction:column';
                         const html = document.documentElement.outerHTML;
+                        // CRITICAL: restore live DOM immediately so THIS page stays as decoy
+                        decoyEl.style.cssText = '';
+                        archiveEl.style.cssText = '';
                         targetDoc.open();
                         targetDoc.write(html);
                         targetDoc.close();
