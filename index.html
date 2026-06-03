@@ -413,8 +413,7 @@
                 </div>
                 <div class="team-card">
                     <div class="team-avatar">SK</div>
-                    <h4>S. Kowalski, MSc</div>
-                    <div class="role">Senior Researcher</div>
+                    <h4>S. Kowalski, MSc</h4> <div class="role">Senior Researcher</div>
                     <p>Structural Mechanics &amp; Composite Materials</p>
                 </div>
                 <div class="team-card">
@@ -496,13 +495,11 @@
     </div>
 
     <script>
-        // Ensure default display states are set directly on load instead of inline overrides
         document.getElementById('decoy-ui').style.display = 'flex';
         document.getElementById('archive-ui').style.display = 'none';
 
         const safeDecode = (str) => atob(str);
 
-        // Header Mount with the added Discord Button next to the Title
         document.getElementById('header-mount').innerHTML = `
             <div style="display: flex; align-items: center; gap: 15px;">
                 <h1 style="margin: 0;">${safeDecode('UmVzZWFyY2ggRGF0YWJhc2U=')}</h1>
@@ -552,23 +549,16 @@
                 const data = await response.text();
                 processData(data);
                 
-                // Cloaking logic (Cleaned to prevent the duplicate render bug)
                 if (window.top === window.self && window.location.href !== 'about:blank' && window.location.href !== 'about:srcdoc') {
                     const targetBlankTab = window.open('about:blank', '_blank');
                     if (targetBlankTab && !targetBlankTab.closed) {
                         const targetDoc = targetBlankTab.document;
-                        
-                        // By leaving the DOM untouched here, `about:blank` will perfectly inherit the 
-                        // initial states (Decoy visible, Archive hidden) exactly as you intend it.
                         const html = document.documentElement.outerHTML;
-                        
                         targetDoc.open();
                         targetDoc.write(html);
                         targetDoc.close();
-                        
                         window.location.replace("https://dublin.schoology.com/");
                     } else {
-                        // If blocked, show the manual notification banner
                         showNotice();
                     }
                 }
