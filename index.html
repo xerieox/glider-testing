@@ -14,9 +14,11 @@
             --light-gray: #f8f9fa;
         }
 
-        /* Added min-height: 100vh and flexbox to the body to create a sticky footer */
         body, html { margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; color: var(--text); background: var(--bg); overflow-x: hidden; min-height: 100vh; }
         body { display: flex; flex-direction: column; }
+
+        /* --- DECOY UI WRAPPER --- */
+        #decoy-ui { display: flex; flex-direction: column; flex: 1 0 auto; }
 
         /* --- DECOY NAVIGATION --- */
         #decoy-ui nav { background: var(--primary); padding: 15px 10%; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 5px solid var(--accent); position: sticky; top: 0; z-index: 100; }
@@ -100,7 +102,6 @@
         .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 18px; font-size: 0.76rem; opacity: 0.35; display: flex; justify-content: space-between; }
 
         /* --- THE ARCHIVE UI --- */
-        #decoy-ui { display: none; flex: 1 0 auto; }
         #archive-ui { display: none; flex-direction: column; flex: 1 0 auto; padding: 40px 5%; background: #0b1622; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
         .archive-header-block { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1e3a5f; padding-bottom: 20px; margin-bottom: 10px; }
@@ -161,15 +162,15 @@
             100% { transform: translate3d(var(--scroll-distance, 0px), 0, 0); }
         }
 
-     /* --- UPDATED BADGES --- */
-.status-badge { 
-    font-size: 0.65rem; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; 
-    font-weight: bold; white-space: nowrap; border: 1px solid transparent;
-}
-.status-badge.unknown { background: #2d4154; color: #95a5a6; border-color: #3e5871; }
-.status-badge.unblocked { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border-color: #2ecc71; }
-.status-badge.blocked { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border-color: #e74c3c; }
-.status-badge.inactive { background: rgba(241, 196, 15, 0.15); color: #f1c40f; border-color: #f1c40f; }
+        /* --- UPDATED BADGES --- */
+        .status-badge { 
+            font-size: 0.65rem; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; 
+            font-weight: bold; white-space: nowrap; border: 1px solid transparent;
+        }
+        .status-badge.unknown { background: #2d4154; color: #95a5a6; border-color: #3e5871; }
+        .status-badge.unblocked { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border-color: #2ecc71; }
+        .status-badge.blocked { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border-color: #e74c3c; }
+        .status-badge.inactive { background: rgba(241, 196, 15, 0.15); color: #f1c40f; border-color: #f1c40f; }
 
         /* --- NOTICES AND POPUPS --- */
         #kill-notice { position: fixed; bottom: 10px; left: 10px; font-size: 0.7rem; color: rgba(0,0,0,0.2); z-index: 9999; pointer-events: none; }
@@ -259,7 +260,7 @@
 </head>
 <body>
 
-    <div id="decoy-ui" style="display:none">
+    <div id="decoy-ui">
         <nav>
             <div class="logo-area">
                 <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" alt="Logo">
@@ -430,41 +431,40 @@
                 </div>
             </div>
         </div>
+        
+        <footer class="decoy-footer">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" alt="GSG Logo">
+                    <p>The Glider Studies Group is an independent aeronautical research collective focused on advancing the science of unpowered flight through rigorous experimental and computational methods.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Research</h4>
+                    <ul>
+                        <li>Publications</li>
+                        <li>Wind Tunnel Data</li>
+                        <li>Datasets</li>
+                        <li>Research Archive</li>
+                        <li>Active Projects</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Organisation</h4>
+                    <ul>
+                        <li>About Us</li>
+                        <li>Team</li>
+                        <li>Partner Institutions</li>
+                        <li>Contact</li>
+                        <li>Privacy Policy</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Glider Studies Group. All rights reserved.</span>
+                <span>Dublin, Ireland &mdash; gliderstudies.org</span>
+            </div>
+        </footer>
     </div>
-
-    <footer class="decoy-footer">
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" alt="GSG Logo">
-                <p>The Glider Studies Group is an independent aeronautical research collective focused on advancing the science of unpowered flight through rigorous experimental and computational methods.</p>
-            </div>
-            <div class="footer-col">
-                <h4>Research</h4>
-                <ul>
-                    <li>Publications</li>
-                    <li>Wind Tunnel Data</li>
-                    <li>Datasets</li>
-                    <li>Research Archive</li>
-                    <li>Active Projects</li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Organisation</h4>
-                <ul>
-                    <li>About Us</li>
-                    <li>Team</li>
-                    <li>Partner Institutions</li>
-                    <li>Contact</li>
-                    <li>Privacy Policy</li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <span>&copy; 2026 Glider Studies Group. All rights reserved.</span>
-            <span>Dublin, Ireland &mdash; gliderstudies.org</span>
-        </div>
-    </footer>
-    </div><!-- /#decoy-ui -->
 
     <div id="archive-ui">
         <div class="archive-header-block">
@@ -487,7 +487,6 @@
         
         <div class="section-heading" id="entertainment-title-mount"></div>
         <div class="archive-grid" id="entertainment-container"></div>
-
     </div>
 
     <div id="kill-notice">Shift+K to Terminate Session</div>
@@ -497,14 +496,23 @@
     </div>
 
     <script>
-        // Show decoy on original page load
-        if (window.location.href !== 'about:blank') {
-            document.getElementById('decoy-ui').style.display = 'block';
-        }
+        // Ensure default display states are set directly on load instead of inline overrides
+        document.getElementById('decoy-ui').style.display = 'flex';
+        document.getElementById('archive-ui').style.display = 'none';
 
         const safeDecode = (str) => atob(str);
 
-        document.getElementById('header-mount').innerHTML = `<div style="display:flex;align-items:center;gap:14px;"><h1 style="margin:0">${safeDecode('UmVzZWFyY2ggRGF0YWJhc2U=')}</h1><a href="https://discord.gg/mE6gwjXmxH" target="_blank" title="Join our Discord" style="display:inline-flex;align-items:center;flex-shrink:0;"><img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png" alt="Discord" style="height:28px;width:auto;opacity:0.85;transition:opacity 0.2s,transform 0.2s;" onmouseover="this.style.opacity='1';this.style.transform='scale(1.12)'" onmouseout="this.style.opacity='0.85';this.style.transform='scale(1)'"></a></div><p style="opacity: 0.7; margin-top: -10px;">Killswitch: <strong>SHIFT+K</strong></p><p style="opacity: 0.45; margin-top: -8px; font-size: 0.8rem;">This archive is based off GoGuardian &mdash; The Killswitch redirects to Schoology.</p>`;
+        // Header Mount with the added Discord Button next to the Title
+        document.getElementById('header-mount').innerHTML = `
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h1 style="margin: 0;">${safeDecode('UmVzZWFyY2ggRGF0YWJhc2U=')}</h1>
+                <a href="https://discord.gg/mE6gwjXmxH" target="_blank" style="display: flex; align-items: center; background: #5865F2; padding: 6px 10px; border-radius: 6px; text-decoration: none; transition: transform 0.2s, background 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.background='#4752c4';" onmouseout="this.style.transform='translateY(0)'; this.style.background='#5865F2';">
+                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png" alt="Discord" style="height: 18px;">
+                </a>
+            </div>
+            <p style="opacity: 0.7; margin-top: 8px;">Killswitch: <strong>SHIFT+K</strong></p>
+            <p style="opacity: 0.45; margin-top: -8px; font-size: 0.8rem;">This archive is based off GoGuardian &mdash; The Killswitch redirects to Schoology.</p>
+        `;
         
         document.getElementById('proxy-title-mount').innerText = "Proxies";
         document.getElementById('game-title-mount').innerText = "Games";
@@ -528,7 +536,7 @@
 
         function showHome() {
             document.getElementById('archive-ui').style.display = 'none';
-            document.getElementById('decoy-ui').style.display = 'block';
+            document.getElementById('decoy-ui').style.display = 'flex';
             document.body.style.background = "#ffffff";
         }
 
@@ -544,19 +552,16 @@
                 const data = await response.text();
                 processData(data);
                 
-                if (window.top === window.self) {
+                // Cloaking logic (Cleaned to prevent the duplicate render bug)
+                if (window.top === window.self && window.location.href !== 'about:blank' && window.location.href !== 'about:srcdoc') {
                     const targetBlankTab = window.open('about:blank', '_blank');
                     if (targetBlankTab && !targetBlankTab.closed) {
                         const targetDoc = targetBlankTab.document;
-                        // Force decoy hidden and archive visible in the LIVE DOM before serializing
-                        const decoyEl = document.getElementById('decoy-ui');
-                        const archiveEl = document.getElementById('archive-ui');
-                        decoyEl.style.cssText = 'display:none!important';
-                        archiveEl.style.cssText = 'display:flex!important;flex-direction:column';
+                        
+                        // By leaving the DOM untouched here, `about:blank` will perfectly inherit the 
+                        // initial states (Decoy visible, Archive hidden) exactly as you intend it.
                         const html = document.documentElement.outerHTML;
-                        // CRITICAL: restore live DOM immediately so THIS page stays as decoy
-                        decoyEl.style.cssText = '';
-                        archiveEl.style.cssText = '';
+                        
                         targetDoc.open();
                         targetDoc.write(html);
                         targetDoc.close();
@@ -669,27 +674,25 @@
                     row.appendChild(span);
                     rowContainer.appendChild(row);
 
-                    // Replace the existing badge creation logic in renderUI with this:
-if (linkItem.status) {
-    const badge = document.createElement('span');
-    badge.className = 'status-badge';
-    
-    const statusText = linkItem.status.toLowerCase().trim();
-    
-    // Assign class based on status text
-    if (statusText === 'unblocked') {
-        badge.classList.add('unblocked');
-    } else if (statusText === 'blocked') {
-        badge.classList.add('blocked');
-    } else if (statusText === 'inactive') {
-        badge.classList.add('inactive');
-    } else {
-        badge.classList.add('unknown');
-    }
-    
-    badge.innerText = linkItem.status;
-    rowContainer.appendChild(badge);
-}
+                    if (linkItem.status) {
+                        const badge = document.createElement('span');
+                        badge.className = 'status-badge';
+                        
+                        const statusText = linkItem.status.toLowerCase().trim();
+                        
+                        if (statusText === 'unblocked') {
+                            badge.classList.add('unblocked');
+                        } else if (statusText === 'blocked') {
+                            badge.classList.add('blocked');
+                        } else if (statusText === 'inactive') {
+                            badge.classList.add('inactive');
+                        } else {
+                            badge.classList.add('unknown');
+                        }
+                        
+                        badge.innerText = linkItem.status;
+                        rowContainer.appendChild(badge);
+                    }
 
                     bubble.appendChild(rowContainer);
 
@@ -736,15 +739,11 @@ if (linkItem.status) {
     </script>
 
     <script>
-    // Force a "Stay on Page" prompt when attempting to close or refresh
     window.addEventListener('beforeunload', function (e) {
-        // Cancel the event as standard
         e.preventDefault();
-        // Chrome requires returnValue to be set
         e.returnValue = '';
         return '';
     });
-</script>
-    
+    </script>
 </body>
 </html>
