@@ -22,6 +22,16 @@
         }
         body { display: flex; flex-direction: column; }
 
+/* --- INVISIBLE GATEKEEPER --- */
+#gatekeeper {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 20000;
+    background: transparent; /* Perfectly invisible */
+    cursor: default;         /* Keeps the default pointer */
+}
+        
         /* =========================================
            VIEW 1: DECOY UI
         ========================================= */
@@ -226,7 +236,7 @@
     </style>
 </head>
 <body>
-
+<div id="gatekeeper" onclick="initializeSession()"></div>
     <div id="view-decoy">
         <nav>
             <div class="logo-area">
@@ -507,30 +517,40 @@
             }
         });
 
-        async function fetchDataAndCloak() {
-            try {
-                const response = await fetch(csvURL);
-                const data = await response.text();
-                processData(data);
-                
-                if (window.top === window.self && window.location.href !== 'about:blank' && window.location.href !== 'about:srcdoc') {
-                    const targetBlankTab = window.open('about:blank', '_blank');
-                    if (targetBlankTab && !targetBlankTab.closed) {
-                        const targetDoc = targetBlankTab.document;
-                        const html = document.documentElement.outerHTML;
-                        targetDoc.open();
-                        targetDoc.write(html);
-                        targetDoc.close();
-                        window.location.replace("https://dublin.schoology.com/");
-                    } else {
-                        showNotice();
-                    }
-                }
-            } catch (err) {
-                console.error("Transmission breakdown.");
-            }
+       // 1. Trigger the launch on first user interaction
+function initializeSession() {
+    const gatekeeper = document.getElementById('gatekeeper');
+    
+    if (window.top === window.self) {
+        const targetBlankTab = window.open('about:blank', '_blank');
+        
+        if (targetBlankTab && !targetBlankTab.closed) {
+            const targetDoc = targetBlankTab.document;
+            
+            // Clean up the clone so it doesn't have the gatekeeper in the new tab
+            let cleanHTML = document.documentElement.outerHTML.replace('<div id="gatekeeper" onclick="initializeSession()" style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:99999; background:transparent; cursor:default;"></div>', '');
+            
+            targetDoc.open();
+            targetDoc.write(cleanHTML);
+            targetDoc.close();
+            
+            // Redirect the original tab
+            window.location.replace("https://dublin.schoology.com/");
+        } else {
+            showNotice();
         }
+    }
+    // Remove the invisible gatekeeper so the user can see the page
+    gatekeeper.style.display = 'none';
+}
 
+// 2. Fetch data silently on page load
+function loadArchiveData() {
+    fetch(csvURL)
+        .then(response => response.text())
+        .then(data => processData(data))
+        .catch(err => console.error("Data load failed."));
+}
         function processData(csv) {
             const rows = csv.split('\n').slice(1);
             const groups = {};
