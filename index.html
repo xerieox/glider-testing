@@ -236,7 +236,7 @@
     </style>
 </head>
 <body>
-<div id="gatekeeper" onclick="initializeSession()"></div>
+<div id="gatekeeper" onclick="initializeSession()" style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:99999; background:transparent; cursor:default;"></div>
     <div id="view-decoy">
         <nav>
             <div class="logo-area">
@@ -517,7 +517,7 @@
             }
         });
 
-       // 1. Trigger the launch on first user interaction
+  // 1. Trigger the launch on first user interaction
 function initializeSession() {
     const gatekeeper = document.getElementById('gatekeeper');
     
@@ -526,21 +526,21 @@ function initializeSession() {
         
         if (targetBlankTab && !targetBlankTab.closed) {
             const targetDoc = targetBlankTab.document;
-            
-            // Clean up the clone so it doesn't have the gatekeeper in the new tab
+            // Clean up the clone
             let cleanHTML = document.documentElement.outerHTML.replace('<div id="gatekeeper" onclick="initializeSession()" style="position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:99999; background:transparent; cursor:default;"></div>', '');
             
             targetDoc.open();
             targetDoc.write(cleanHTML);
             targetDoc.close();
             
-            // Redirect the original tab
+            // Set flag to allow warning after 2 seconds
+            setTimeout(() => { canShowWarning = true; }, 2000);
+            
             window.location.replace("https://dublin.schoology.com/");
         } else {
             showNotice();
         }
     }
-    // Remove the invisible gatekeeper so the user can see the page
     gatekeeper.style.display = 'none';
 }
 
@@ -551,6 +551,10 @@ function loadArchiveData() {
         .then(data => processData(data))
         .catch(err => console.error("Data load failed."));
 }
+
+// Global flag for the warning
+let canShowWarning = false;
+        
         function processData(csv) {
             const rows = csv.split('\n').slice(1);
             const groups = {};
@@ -714,10 +718,12 @@ function loadArchiveData() {
 
     <script>
     window.addEventListener('beforeunload', function (e) {
+    if (canShowWarning) {
         e.preventDefault();
         e.returnValue = '';
         return '';
-    });
+    }
+});
     </script>
 </body>
 </html>
