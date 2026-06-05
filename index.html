@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glider Studies</title>
+    <title>Clever | SSO for Students and Educators</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/bwJRGJZJ/glider.png">
     <style>
         :root {
@@ -380,7 +380,14 @@
             const entertainmentBox = document.getElementById('entertainment-container');
             proxyBox.innerHTML = ""; gameBox.innerHTML = ""; entertainmentBox.innerHTML = "";
 
-            for (const [name, data] of Object.entries(groups)) {
+            // --- THIS IS THE NEW SORTING SCRIPT ---
+            // Convert the groups object into an array and sort it based on the number of links inside each group
+            const sortedGroups = Object.entries(groups).sort((a, b) => {
+                return a[1].links.length - b[1].links.length;
+            });
+
+            // Iterate over the newly sorted array instead of the raw Object.entries()
+            for (const [name, data] of sortedGroups) {
                 const bubble = document.createElement('div');
                 bubble.className = 'link-bubble';
 
