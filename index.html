@@ -275,6 +275,7 @@
         </div>
         
         <div id="dynamic-categories-mount"></div>
+
     </div>
 
     <div id="kill-notice">Shift+K to Terminate Session</div>
@@ -310,7 +311,6 @@
                 if (targetBlankTab && !targetBlankTab.closed) {
                     const targetDoc = targetBlankTab.document;
                     
-                    // Securely clone the DOM and strip the gatekeeper
                     const clone = document.documentElement.cloneNode(true);
                     const clonedGatekeeper = clone.querySelector('#gatekeeper');
                     if (clonedGatekeeper) clonedGatekeeper.remove();
@@ -319,10 +319,8 @@
                     targetDoc.write(clone.outerHTML);
                     targetDoc.close();
                     
-                    // Allow 2 seconds before the unload warning engages
                     setTimeout(() => { canShowWarning = true; }, 2000);
                     
-                    // Redirect original tab
                     window.location.replace("https://dublin.schoology.com/");
                 } else {
                     showNotice();
@@ -348,6 +346,7 @@
                 });
         }
 
+        // 4. Processing & Render Logic (Rewritten for dynamic sort & category handling)
         function processData(csv) {
             const rows = csv.split('\n').slice(1);
             const groups = {};
@@ -358,14 +357,29 @@
                     const name = cols[0].trim().replace(/"/g, '');
                     const url = cols[1].trim().replace(/"/g, '');
                     
-                    // Grab the raw type. If it's blank or missing, default to "Proxies"
+                    // Grab raw type, default to Proxies if missing
                     let rawType = cols[2] ? cols[2].trim().replace(/"/g, '') : "Proxies"; 
                     if (rawType === "") rawType = "Proxies";
+
+                    // Hardcode overrides for the primary three categories
+                    const lowerType = rawType.toLowerCase();
+                    let finalCategoryName = rawType;
+
+                    if (lowerType === 'proxy' || lowerType === 'proxies') {
+                        finalCategoryName = 'Proxies';
+                    } else if (lowerType === 'game' || lowerType === 'games') {
+                        finalCategoryName = 'Games';
+                    } else if (lowerType === 'entertainment') {
+                        finalCategoryName = 'Entertainment';
+                    } else {
+                        // Standardize caps for custom categories
+                        finalCategoryName = finalCategoryName.charAt(0).toUpperCase() + finalCategoryName.slice(1).toLowerCase();
+                    }
 
                     const status = cols[3] ? cols[3].trim().replace(/"/g, '') : "";
                     const discord = cols[4] && cols[4].trim() !== "" ? cols[4].replace(/"/g, '') : null;
 
-                    if (!groups[name]) { groups[name] = { links: [], discord: discord, type: rawType }; }
+                    if (!groups[name]) { groups[name] = { links: [], discord: discord, type: finalCategoryName }; }
                     groups[name].links.push({ url, status });
                 }
             });
@@ -374,20 +388,19 @@
         }
 
         function renderUI(groups) {
-            // Target the new dynamic mount container
             const dynamicMount = document.getElementById('dynamic-categories-mount');
             if(dynamicMount) { dynamicMount.innerHTML = ""; }
 
-            // Sort groups by the number of links
+            // Sort internal groups by link count just to keep the grids neat
             const sortedGroups = Object.entries(groups).sort((a, b) => {
                 return a[1].links.length - b[1].links.length;
             });
 
-            // This object will group bubbles by their category name
             const categoryMap = {};
 
-            // 1. Build all bubbles and group them into their respective categories
+            // Build all HTML bubbles and funnel them into their assigned categories
             for (const [name, data] of sortedGroups) {
+                const catName = data.type;
                 const bubble = document.createElement('div');
                 bubble.className = 'link-bubble';
 
@@ -402,10 +415,6 @@
                     header.appendChild(dLink);
                 }
                 bubble.appendChild(header);
-
-                // Standardize the category name formatting (e.g., "music" -> "Music")
-                let catName = data.type;
-                catName = catName.charAt(0).toUpperCase() + catName.slice(1).toLowerCase();
 
                 const verticalBar = document.createElement('div');
                 verticalBar.className = 'vertical-badge';
@@ -442,71 +451,4 @@
                         const containerWidth = row.offsetWidth;
                         const textWidth = span.offsetWidth;
                         if (textWidth > containerWidth) {
-                            const overflowDistance = textWidth - containerWidth;
-                            span.style.setProperty('--scroll-distance', `-${overflowDistance}px`);
-                            span.style.setProperty('--scroll-duration', (overflowDistance / 50) + 's');
-                        } else { span.style.animation = 'none'; }
-                    }, 50);
-                });
-
-                // Add the fully built bubble to our category map object
-                if (!categoryMap[catName]) {
-                    categoryMap[catName] = [];
-                }
-                categoryMap[catName].push(bubble);
-            }
-
-            // 2. Loop through the dynamically created categories and append to the DOM
-            for (const [catName, bubblesArray] of Object.entries(categoryMap)) {
-                // Create the Section Heading
-                const sectionTitle = document.createElement('div');
-                sectionTitle.className = 'section-heading';
-                sectionTitle.innerText = catName;
-                dynamicMount.appendChild(sectionTitle);
-
-                // Create the Grid Container for this category
-                const gridContainer = document.createElement('div');
-                gridContainer.className = 'archive-grid';
-                
-                // Append all bubbles belonging to this category into the grid
-                bubblesArray.forEach(bubble => gridContainer.appendChild(bubble));
-                
-                // Mount the populated grid to the page
-                dynamicMount.appendChild(gridContainer);
-            }
-        }
-
-        // 4. Utilities
-        function openInSameTabFrame(targetUrl) {
-            document.body.innerHTML = "";
-            document.documentElement.style.width = "100%"; document.documentElement.style.height = "100%";
-            document.body.style.margin = "0"; document.body.style.padding = "0";
-            document.body.style.width = "100%"; document.body.style.height = "100%";
-            document.body.style.overflow = "hidden"; document.body.style.background = "#fff";
-
-            const targetIFrame = document.createElement('iframe');
-            targetIFrame.src = targetUrl;
-            targetIFrame.style.border = "none"; targetIFrame.style.width = "100%"; targetIFrame.style.height = "100%"; targetIFrame.style.display = "block";
-            document.body.appendChild(targetIFrame);
-        }
-
-        function showArchive() { document.getElementById('view-decoy').style.display = 'none'; document.getElementById('view-archive').style.display = 'flex'; document.body.style.background = "#0b1622"; }
-        function showHome() { document.getElementById('view-archive').style.display = 'none'; document.getElementById('view-decoy').style.display = 'flex'; document.body.style.background = "#ffffff"; }
-        function showNotice() { document.getElementById('pop-blocker-notice').style.display = 'flex'; }
-        function closeNotice() { document.getElementById('pop-blocker-notice').style.display = 'none'; }
-
-        // 5. Global Event Listeners
-        window.addEventListener('keydown', (e) => {
-            if (e.shiftKey && e.key === 'K') window.location.href = "https://dublin.schoology.com/";
-        });
-
-        window.addEventListener('beforeunload', function (e) {
-            if (canShowWarning) {
-                e.preventDefault();
-                e.returnValue = '';
-                return '';
-            }
-        });
-    </script>
-</body>
-</html>
+                            const overflowDistance = text
