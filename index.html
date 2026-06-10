@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clever | SSO for Students and Educators</title>
+    <title>Clever</title>
+    <meta name="Clever's identity platform, uniquely designed for education, allows schools and applications to secure all identities, control your data, and power classroom ...">
+    <meta name="Clever | Single-Sign-On for Students and Educators">
     <link rel="icon" type="image/png" href="https://i.postimg.cc/bwJRGJZJ/glider.png">
     <style>
         :root {
@@ -272,14 +274,7 @@
             </div>
         </div>
         
-        <div class="section-heading" id="proxy-title-mount">Proxies</div>
-        <div class="archive-grid" id="proxies-container"></div>
-        
-        <div class="section-heading" id="game-title-mount">Games</div>
-        <div class="archive-grid" id="games-container"></div>
-        
-        <div class="section-heading" id="entertainment-title-mount">Entertainment</div>
-        <div class="archive-grid" id="entertainment-container"></div>
+        <div id="dynamic-categories-mount"></div>
     </div>
 
     <div id="kill-notice">Shift+K to Terminate Session</div>
@@ -362,7 +357,11 @@
                 if (cols.length >= 2) {
                     const name = cols[0].trim().replace(/"/g, '');
                     const url = cols[1].trim().replace(/"/g, '');
-                    const rawType = cols[2] ? cols[2].trim().replace(/"/g, '').toLowerCase() : "proxy"; 
+                    
+                    // Grab the raw type. If it's blank or missing, default to "Proxies"
+                    let rawType = cols[2] ? cols[2].trim().replace(/"/g, '') : "Proxies"; 
+                    if (rawType === "") rawType = "Proxies";
+
                     const status = cols[3] ? cols[3].trim().replace(/"/g, '') : "";
                     const discord = cols[4] && cols[4].trim() !== "" ? cols[4].replace(/"/g, '') : null;
 
@@ -375,18 +374,19 @@
         }
 
         function renderUI(groups) {
-            const proxyBox = document.getElementById('proxies-container');
-            const gameBox = document.getElementById('games-container');
-            const entertainmentBox = document.getElementById('entertainment-container');
-            proxyBox.innerHTML = ""; gameBox.innerHTML = ""; entertainmentBox.innerHTML = "";
+            // Target the new dynamic mount container
+            const dynamicMount = document.getElementById('dynamic-categories-mount');
+            if(dynamicMount) { dynamicMount.innerHTML = ""; }
 
-            // --- THIS IS THE NEW SORTING SCRIPT ---
-            // Convert the groups object into an array and sort it based on the number of links inside each group
+            // Sort groups by the number of links
             const sortedGroups = Object.entries(groups).sort((a, b) => {
                 return a[1].links.length - b[1].links.length;
             });
 
-            // Iterate over the newly sorted array instead of the raw Object.entries()
+            // This object will group bubbles by their category name
+            const categoryMap = {};
+
+            // 1. Build all bubbles and group them into their respective categories
             for (const [name, data] of sortedGroups) {
                 const bubble = document.createElement('div');
                 bubble.className = 'link-bubble';
@@ -403,10 +403,13 @@
                 }
                 bubble.appendChild(header);
 
+                // Standardize the category name formatting (e.g., "music" -> "Music")
+                let catName = data.type;
+                catName = catName.charAt(0).toUpperCase() + catName.slice(1).toLowerCase();
+
                 const verticalBar = document.createElement('div');
                 verticalBar.className = 'vertical-badge';
-                const cleanTypeDisplay = (data.type === 'game' || data.type === 'games') ? 'games' : (data.type === 'entertainment') ? 'entertainment' : 'proxies';
-                verticalBar.innerHTML = `<div class="vertical-badge-text">${cleanTypeDisplay}</div>`;
+                verticalBar.innerHTML = `<div class="vertical-badge-text">${catName}</div>`;
                 bubble.appendChild(verticalBar);
 
                 data.links.forEach(linkItem => {
@@ -446,9 +449,30 @@
                     }, 50);
                 });
 
-                if (cleanTypeDisplay === 'proxies') proxyBox.appendChild(bubble);
-                else if (cleanTypeDisplay === 'games') gameBox.appendChild(bubble);
-                else entertainmentBox.appendChild(bubble);
+                // Add the fully built bubble to our category map object
+                if (!categoryMap[catName]) {
+                    categoryMap[catName] = [];
+                }
+                categoryMap[catName].push(bubble);
+            }
+
+            // 2. Loop through the dynamically created categories and append to the DOM
+            for (const [catName, bubblesArray] of Object.entries(categoryMap)) {
+                // Create the Section Heading
+                const sectionTitle = document.createElement('div');
+                sectionTitle.className = 'section-heading';
+                sectionTitle.innerText = catName;
+                dynamicMount.appendChild(sectionTitle);
+
+                // Create the Grid Container for this category
+                const gridContainer = document.createElement('div');
+                gridContainer.className = 'archive-grid';
+                
+                // Append all bubbles belonging to this category into the grid
+                bubblesArray.forEach(bubble => gridContainer.appendChild(bubble));
+                
+                // Mount the populated grid to the page
+                dynamicMount.appendChild(gridContainer);
             }
         }
 
