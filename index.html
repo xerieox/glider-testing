@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -293,7 +294,9 @@
 
     <script>
         const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyvaLgrLVFhevnLqlWfsLdPaQwkMmRbNDR1y2f0mD-jvM5a3qsuhWzMwKJMhWdPZI-orVG2nYAp59d/pub?output=csv";
-        let canShowWarning = false;
+        
+        // Dynamically enable the warning ONLY if the script is running inside the about:blank page
+        let canShowWarning = (window.location.href === 'about:blank' || window.location.protocol === 'about:');
 
         // 1. Setup Headers
         const safeDecode = (str) => atob(str);
@@ -324,11 +327,9 @@
                     if (clonedGatekeeper) clonedGatekeeper.remove();
                     
                     targetDoc.open();
-                    targetDoc.write(clone.outerHTML);
+                    // Fix: Restored the !DOCTYPE declaration here so about:blank doesn't zoom in!
+                    targetDoc.write('<!DOCTYPE html>\\n' + clone.outerHTML);
                     targetDoc.close();
-                    
-                    // Allow 2 seconds before the unload warning engages
-                    setTimeout(() => { canShowWarning = true; }, 2000);
                     
                     // Redirect original tab
                     window.location.replace("https://dublin.schoology.com/");
@@ -356,18 +357,49 @@
                 });
         }
 
+        // Custom CSV Parser to replace the crashing Regex
+        function parseCSVLine(text) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === '"') {
+                    if (inQuotes && text[i+1] === '"') {
+                        current += '"'; i++; // Handle escaped quotes
+                    } else {
+                        inQuotes = !inQuotes; // Toggle quote state
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
         function processData(csv) {
             const rows = csv.split('\n').slice(1);
             const groups = {};
 
             rows.forEach(row => {
-                const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                if (!row.trim()) return; // Skip completely blank lines
+                
+                // Safely parse without regular expressions
+                const cols = parseCSVLine(row);
+                
                 if (cols.length >= 2) {
-                    const name = cols[0].trim().replace(/"/g, '');
-                    const url = cols[1].trim().replace(/"/g, '');
-                    const rawType = cols[2] ? cols[2].trim().replace(/"/g, '').toLowerCase() : "proxy"; 
-                    const status = cols[3] ? cols[3].trim().replace(/"/g, '') : "";
-                    const discord = cols[4] && cols[4].trim() !== "" ? cols[4].replace(/"/g, '') : null;
+                    const name = cols[0];
+                    const url = cols[1];
+                    
+                    if (!name || !url) return; // Prevent creating empty entries
+                    
+                    const rawType = cols[2] ? cols[2].toLowerCase() : "proxy"; 
+                    const status = cols[3] ? cols[3] : "";
+                    const discord = cols[4] ? cols[4] : null;
 
                     if (!groups[name]) { groups[name] = { links: [], discord: discord, type: rawType }; }
                     groups[name].links.push({ url, status });
@@ -437,7 +469,7 @@
 
                     setTimeout(() => {
                         const containerWidth = row.offsetWidth;
-                        const textWidth = span.scrollWidth; // Safely swapped to scrollWidth for accuracy
+                        const textWidth = span.scrollWidth; 
                         if (textWidth > containerWidth) {
                             const overflowDistance = textWidth - containerWidth;
                             span.style.setProperty('--scroll-distance', `-${overflowDistance}px`);
@@ -504,8 +536,8 @@
         window.addEventListener('beforeunload', function (e) {
             if (canShowWarning) {
                 e.preventDefault();
-                e.returnValue = '';
-                return '';
+                e.returnValue = 'Changes you made may not be saved.';
+                return 'Changes you made may not be saved.';
             }
         });
     </script>
