@@ -10,7 +10,586 @@
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/png" href="https://www.clever.com/wp-content/uploads/2023/06/cropped-Favicon-512px-32x32.png">
     <style>
+        :root {<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clever</title>
+    <meta name="Clever's identity platform, uniquely designed for education, allows schools and applications to secure all identities, control your data, and power classroom ...">
+    <meta name="Clever | Single-Sign-On for Students and Educators">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" type="image/png" href="https://www.clever.com/wp-content/uploads/2023/06/cropped-Favicon-512px-32x32.png">
+    <style>
         :root {
+            --primary: #1e3a5f; 
+            --accent: #26b1a5;  
+            --bg: #ffffff;
+            --text: #333;
+            --light-gray: #f8f9fa;
+        }
+
+        body, html { margin: 0; padding: 0; font-family: 'Times New Roman', Times, serif; color: var(--text); background: var(--bg); overflow-x: hidden; min-height: 100vh; }
+        body { display: flex; flex-direction: column; }
+
+        /* --- GATEKEEPER LAYER --- */
+        #gatekeeper {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 99999; background: transparent; cursor: default;
+        }
+
+        /* --- VIEW 1: DECOY UI --- */
+        #view-decoy { display: flex; flex-direction: column; flex: 1 0 auto; min-height: 100vh; }
+        
+        #view-decoy nav { background: var(--primary); padding: 15px 10%; display: flex; justify-content: space-between; align-items: center; color: white; border-bottom: 5px solid var(--accent); position: sticky; top: 0; z-index: 100; }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-area img { height: 50px; filter: brightness(1.2); }
+        .logo-area span { font-size: 1.1rem; font-weight: bold; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 20px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a { color: white; text-decoration: none; cursor: pointer; padding-bottom: 3px; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .nav-links a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+        .hero { padding: 80px 10% 60px; background: linear-gradient(135deg, #e8f4f8 0%, var(--light-gray) 60%, #dceef5 100%); border-bottom: 1px solid #dde; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; right: 8%; top: 50%; transform: translateY(-50%); width: 320px; height: 320px; background: url('https://i.postimg.cc/bwJRGJZJ/glider.png') center/contain no-repeat; opacity: 0.06; }
+        .hero-tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: var(--accent); font-weight: bold; margin-bottom: 12px; }
+        .hero h1 { font-size: 2.8rem; margin: 0 0 14px; color: var(--primary); line-height: 1.2; max-width: 600px; }
+        .hero p { font-size: 1.15rem; color: #555; max-width: 540px; line-height: 1.7; margin: 0 0 28px; }
+        .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+        .btn-primary { background: var(--primary); color: white; padding: 11px 24px; border: none; font-family: 'Times New Roman', serif; font-size: 0.95rem; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.2s; }
+        .btn-primary:hover { background: #2a4f82; }
+        .btn-outline { background: transparent; color: var(--primary); padding: 10px 24px; border: 2px solid var(--primary); font-family: 'Times New Roman', serif; font-size: 0.95rem; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.2s; }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        .stats-bar { background: var(--primary); color: white; display: flex; justify-content: space-around; padding: 28px 10%; border-bottom: 3px solid var(--accent); }
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 2rem; font-weight: bold; color: var(--accent); display: block; }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; }
+
+        .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; padding: 50px 10%; }
+        .article-block { line-height: 1.8; font-size: 1.05rem; }
+        .article-block h2 { color: var(--primary); font-size: 1.5rem; border-left: 4px solid var(--accent); padding-left: 14px; margin-top: 0; }
+        .article-block h3 { color: var(--primary); font-size: 1.1rem; margin-top: 32px; }
+        .article-block p { color: #444; margin-top: 0; }
+        .article-block .read-more { color: var(--accent); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; text-decoration: none; border-bottom: 1px solid var(--accent); }
+        .article-divider { border: none; border-top: 1px solid #e0e0e0; margin: 36px 0; }
+
+        .sidebar-block { border: 1px solid #ddd; padding: 22px; background: #fff; height: fit-content; margin-bottom: 24px; }
+        .sidebar-block h3 { margin-top: 0; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 8px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-block ul { padding-left: 18px; line-height: 2.1; font-size: 0.92rem; margin: 0; }
+        .sidebar-block li { color: #444; }
+        .metric-value { color: var(--primary); font-weight: bold; float: right; font-size: 0.9rem; }
+        .recent-item { padding: 11px 0; border-bottom: 1px solid #eee; }
+        .recent-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .recent-item .date { font-size: 0.72rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        .recent-item a { color: var(--primary); text-decoration: none; display: block; margin-top: 3px; font-size: 0.88rem; line-height: 1.4; }
+        .recent-item a:hover { color: var(--accent); }
+
+        .featured-section { background: var(--light-gray); padding: 50px 10%; border-top: 1px solid #dde; }
+        .featured-section > h2 { color: var(--primary); font-size: 1.5rem; margin-top: 0; }
+        .featured-section .section-sub { color: #777; margin: -10px 0 32px; font-size: 0.95rem; }
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+        .research-card { background: white; border: 1px solid #ddd; padding: 24px; transition: box-shadow 0.2s, transform 0.2s; cursor: default; }
+        .research-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.07); transform: translateY(-3px); }
+        .card-tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-weight: bold; margin-bottom: 10px; }
+        .research-card h4 { color: var(--primary); margin: 0 0 10px; font-size: 1rem; line-height: 1.4; font-family: 'Times New Roman', serif; }
+        .research-card p { font-size: 0.87rem; color: #666; line-height: 1.6; margin: 0; }
+
+        .team-section { padding: 50px 10%; border-top: 1px solid #dde; }
+        .team-section > h2 { color: var(--primary); font-size: 1.5rem; margin-top: 0; }
+        .team-section > p { color: #666; margin: -10px 0 32px; }
+        .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        .team-card { text-align: center; padding: 20px; border: 1px solid #eee; background: #fff; }
+        .team-avatar { width: 72px; height: 72px; border-radius: 50%; background: #ddeef5; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem; font-weight: bold; border: 3px solid var(--accent); font-family: 'Times New Roman', serif; }
+        .team-card h4 { margin: 0 0 5px; color: var(--primary); font-size: 0.95rem; }
+        .team-card .role { margin: 0 0 6px; font-size: 0.78rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+        .team-card p { margin: 0; font-size: 0.8rem; color: #888; line-height: 1.5; }
+
+        .decoy-footer { margin-top: auto; flex-shrink: 0; background: var(--primary); color: white; padding: 44px 10% 20px; border-top: 4px solid var(--accent); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 32px; }
+        .footer-brand img { height: 44px; margin-bottom: 12px; filter: brightness(1.3); display: block; }
+        .footer-brand p { font-size: 0.84rem; opacity: 0.55; line-height: 1.7; margin: 0; }
+        .footer-col h4 { color: var(--accent); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 14px; }
+        .footer-col ul { list-style: none; padding: 0; margin: 0; }
+        .footer-col li { font-size: 0.84rem; opacity: 0.55; padding: 5px 0; cursor: pointer; transition: opacity 0.2s; }
+        .footer-col li:hover { opacity: 1; color: var(--accent); }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 18px; font-size: 0.76rem; opacity: 0.35; display: flex; justify-content: space-between; }
+
+        /* --- VIEW 2: ARCHIVE UI --- */
+        #view-archive { display: none; flex-direction: column; flex: 1 0 auto; padding: 40px 5%; background: #0b1622; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; min-height: 100vh; }
+        
+        .archive-header-block { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #1e3a5f; padding-bottom: 20px; margin-bottom: 10px; }
+        .archive-header-logo { height: 65px; filter: brightness(1.1); cursor: pointer; transition: transform 0.2s; }
+        .archive-header-logo:hover { transform: scale(1.05); }
+
+        .section-heading { color: var(--accent); font-size: 1.8rem; letter-spacing: 2px; margin: 40px 0 20px 0; border-bottom: 2px solid #1e3a5f; padding-bottom: 8px; text-transform: uppercase; font-weight: bold;}
+        
+        .archive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 25px; margin-bottom: 40px;}
+        
+        .link-bubble { background: #162431; border: 1px solid #2d4154; border-radius: 8px; padding: 20px 20px 20px 55px; transition: transform 0.2s; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .link-bubble:hover { transform: translateY(-3px); border-color: var(--accent); }
+        
+        .category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 1.2rem;}
+        .discord-icon { height: 20px; opacity: 0.6; transition: 0.3s; }
+        .discord-icon:hover { opacity: 1; filter: drop-shadow(0 0 5px #5865F2); }
+
+        .vertical-badge { position: absolute; left: 0; top: 0; bottom: 0; width: 35px; background: #101b26; border-right: 1px solid #2d4154; display: flex; align-items: center; justify-content: center; }
+        .vertical-badge-text { transform: rotate(-90deg); white-space: nowrap; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: #7f8c8d; font-weight: bold; }
+        .link-bubble:hover .vertical-badge-text { color: var(--accent); }
+
+        .link-row-container { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; background: #0b1622; border: 1px solid #1e3a5f; border-radius: 4px; padding: 8px 10px; overflow: hidden; position: relative; }
+
+        .mirror-row { flex-grow: 1; overflow: hidden; position: relative; text-decoration: none; color: var(--accent); white-space: nowrap; display: block; cursor: pointer; }
+        
+        .url-text { display: inline-block; filter: blur(6px); transition: filter 0.3s; padding-left: 0; transform: translate3d(0, 0, 0); }
+        .mirror-row:hover .url-text { filter: blur(0px); animation: constant-scroll var(--scroll-duration, 4s) linear forwards; }
+        @keyframes constant-scroll { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(var(--scroll-distance, 0px), 0, 0); } }
+
+        .status-badge { font-size: 0.65rem; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; font-weight: bold; white-space: nowrap; border: 1px solid transparent; }
+        .status-badge.unknown { background: #2d4154; color: #95a5a6; border-color: #3e5871; }
+        .status-badge.unblocked { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border-color: #2ecc71; }
+        .status-badge.blocked { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border-color: #e74c3c; }
+        .status-badge.inactive { background: rgba(241, 196, 15, 0.15); color: #f1c40f; border-color: #f1c40f; }
+
+        /* --- NOTICES AND POPUPS --- */
+        #kill-notice { position: fixed; bottom: 10px; left: 10px; font-size: 0.7rem; color: rgba(0,0,0,0.2); z-index: 9999; pointer-events: none; }
+        
+        .popup-banner { position: fixed; bottom: 20px; right: 20px; background: #e74c3c; color: white; padding: 12px 40px 12px 18px; border-radius: 6px; font-family: sans-serif; font-size: 0.9rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 10000; display: none; align-items: center; border: 1px solid #c0392b; animation: slideIn 0.3s ease-out; }
+        .popup-banner .close-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 1.2rem; font-weight: bold; color: rgba(255,255,255,0.8); line-height: 1; transition: color 0.2s; }
+        .popup-banner .close-btn:hover { color: white; }
+
+        .header-btn-cluster { display: flex; align-items: center; gap: 14px; }
+        .btn-stack { display: flex; flex-direction: column; gap: 7px; }
+        .arch-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 18px; border-radius: 999px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; text-decoration: none; cursor: pointer; border: none; transition: all 0.2s ease-in-out; white-space: nowrap; }
+        .arch-btn.contribute { background: var(--accent); color: #0b1622; box-shadow: 0 2px 10px rgba(38,177,165,0.25); }
+        .arch-btn.contribute:hover { background: #2ecfc2; box-shadow: 0 4px 18px rgba(38,177,165,0.45); transform: translateY(-2px); }
+        .arch-btn.help { background: transparent; color: var(--accent); border: 2px solid rgba(38,177,165,0.5); }
+        .arch-btn.help:hover { background: rgba(38,177,165,0.08); border-color: var(--accent); transform: translateY(-2px); }
+        .arch-btn.refresh { background: #162431; color: #8fa8be; border: 1px solid #2d4154; align-self: stretch; height: auto; font-size: 0.78rem; }
+        .arch-btn.refresh:hover { background: #1e3347; color: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+        .arch-btn.refresh.loading { opacity: 0.55; pointer-events: none; }
+    </style>
+</head>
+
+<body onload="loadArchiveData()">
+
+    <div id="gatekeeper" onclick="initializeSession()"></div>
+
+    <div id="view-decoy">
+        <nav>
+            <div class="logo-area">
+                <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" alt="Logo">
+                <span>Glider Studies Group</span>
+            </div>
+            <div class="nav-links">
+                <a>Publications</a>
+                <a>Wind Tunnel Data</a>
+                <a onclick="showArchive()" id="entry-point">Research Archive</a>
+                <a>About Us</a>
+                <a>Contact</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="hero-tag">Fluid Dynamics &amp; Aviation Research — Est. 2018</div>
+            <h1>Advanced Lift Distribution Systems</h1>
+            <p>Exploring the intersection of fluid mechanics and unpowered structural integrity. Our research group pioneers computational models for next-generation glider aerodynamics.</p>
+            <div class="hero-btns">
+                <a class="btn-primary">View Publications</a>
+                <a class="btn-outline">Meet the Team</a>
+            </div>
+        </section>
+
+        <div class="stats-bar">
+            <div class="stat-item"><span class="stat-number">142</span><span class="stat-label">Published Papers</span></div>
+            <div class="stat-item"><span class="stat-number">18</span><span class="stat-label">Active Projects</span></div>
+            <div class="stat-item"><span class="stat-number">9</span><span class="stat-label">Partner Institutions</span></div>
+            <div class="stat-item"><span class="stat-number">2,400+</span><span class="stat-label">Wind Tunnel Hours</span></div>
+        </div>
+
+        <div class="main-grid">
+            <div class="article-block">
+                <h2>The 2026 Albatross Study</h2>
+                <p>New observations in avian gliding suggest that wingtip vortices play a larger role in energy conservation than previously modeled. By adjusting the dihedral angle of synthetic composite wings, we achieved a 12% increase in overall glide ratio under standard atmospheric conditions.</p>
+                <p>Experimental data collected from the Dublin test site confirms that thermal lift is maximized when surface temperature differentials exceed 4.5 degrees Celsius. Cross-referencing with satellite wind data has enabled a new predictive model that outperforms prior benchmarks by a statistically significant margin.</p>
+                <a class="read-more">Continue Reading &rarr;</a>
+
+                <hr class="article-divider">
+
+                <h3>Composite Wing Flex Analysis — Interim Report</h3>
+                <p>Phase II testing of our carbon-fibre laminate series concluded in March 2026. High-speed camera arrays captured micro-deformation events at 4,000 fps, revealing previously undetected flutter signatures near the wingtip at high angles of attack. The findings have implications for both manned and unmanned glider certification standards.</p>
+                <a class="read-more">Continue Reading &rarr;</a>
+
+                <hr class="article-divider">
+
+                <h3>Atmospheric Boundary Layer Interactions</h3>
+                <p>Our meteorological subteam has published updated coefficients for drag estimation within the planetary boundary layer, improving accuracy for low-altitude soaring flight by approximately 8.3% over the ISO 2533 standard atmosphere model.</p>
+                <a class="read-more">Download Dataset &rarr;</a>
+            </div>
+
+            <div>
+                <div class="sidebar-block">
+                    <h3>Latest Metrics</h3>
+                    <ul>
+                        <li>Reynolds Number <span class="metric-value">4.5 &times; 10&sup5;</span></li>
+                        <li>Camber Variance <span class="metric-value">0.02</span></li>
+                        <li>Drag Coefficient <span class="metric-value">0.015</span></li>
+                        <li>Lift-to-Drag Ratio <span class="metric-value">47.3</span></li>
+                        <li>Stall Speed <span class="metric-value">62.4</span></li>
+                    </ul>
+                </div>
+                <div class="sidebar-block">
+                    <h3>Recent Publications</h3>
+                    <div class="recent-item"><div class="date">May 2026</div><a>Vortex Shedding Patterns</a></div>
+                    <div class="recent-item"><div class="date">March 2026</div><a>Carbon-Fibre Laminate Fatigue</a></div>
+                    <div class="recent-item"><div class="date">January 2026</div><a>Revised BL Drag Coefficients</a></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="featured-section">
+            <h2>Current Research Focus Areas</h2>
+            <p class="section-sub">Six active research tracks across aerodynamics, materials, and computational modelling.</p>
+            <div class="cards-grid">
+                <div class="research-card"><div class="card-tag">Aerodynamics</div><h4>Nonlinear Lift Curve Modelling</h4><p>Extending classical thin-airfoil theory for leading-edge separation bubbles.</p></div>
+                <div class="research-card"><div class="card-tag">Materials</div><h4>Bio-Inspired Morphing Wings</h4><p>Shape-memory polymer actuators embedded in wing skins.</p></div>
+                <div class="research-card"><div class="card-tag">Computational</div><h4>LES Simulation of Wakes</h4><p>Large-eddy simulations to characterise wake hazard zones.</p></div>
+            </div>
+        </div>
+
+        <footer class="decoy-footer">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" alt="GSG Logo">
+                    <p>The Glider Studies Group is an independent aeronautical research collective focused on advancing the science of unpowered flight.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Research</h4>
+                    <ul><li>Publications</li><li>Wind Tunnel Data</li><li>Research Archive</li></ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Glider Studies Group. All rights reserved.</span>
+                <span>Dublin, Ireland &mdash; gliderstudies.org</span>
+            </div>
+        </footer>
+    </div>
+
+    <div id="view-archive">
+        <div class="archive-header-block">
+            <div id="header-mount"></div>
+            <div class="header-btn-cluster">
+                <button class="arch-btn refresh" onclick="loadArchiveData()" id="reload-btn">↻ Refresh Archive</button>
+                <div class="btn-stack">
+                    <a href="https://forms.office.com/r/zGnP2D6Anb" target="_blank" class="arch-btn contribute">✦ Contribute</a>
+                    <a href="https://forms.office.com/r/zGnP2D6Anb" target="_blank" class="arch-btn help">? Help / Report Block</a>
+                </div>
+                <img src="https://i.postimg.cc/bwJRGJZJ/glider.png" class="archive-header-logo" onclick="showHome()" alt="Glider Studies Asset">
+            </div>
+        </div>
+        
+        <!-- DYNAMIC MOUNT POINT FOR ALL CATEGORIES -->
+        <div id="dynamic-categories-mount"></div>
+
+    </div>
+
+    <div id="kill-notice">Shift+K to Terminate Session</div>
+    <div id="pop-blocker-notice" class="popup-banner">
+        <span>Please allow Pop-ups for this site to work properly</span>
+        <span class="close-btn" onclick="closeNotice()">&times;</span>
+    </div>
+
+    <script>
+        const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyvaLgrLVFhevnLqlWfsLdPaQwkMmRbNDR1y2f0mD-jvM5a3qsuhWzMwKJMhWdPZI-orVG2nYAp59d/pub?output=csv";
+        
+        let canShowWarning = (window.location.href === 'about:blank' || window.location.protocol === 'about:');
+
+        // Function to inject zero-width spaces to break up string-matching filters
+        function ghostText(str) {
+            if (!str) return "";
+            return String(str).split('').join('\u200B');
+        }
+
+        const safeDecode = (str) => atob(str);
+        document.getElementById('header-mount').innerHTML = `
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h1 style="margin: 0;">${safeDecode('UmVzZWFyY2ggRGF0YWJhc2U=')}</h1>
+                <a href="https://discord.gg/mE6gwjXmxH" target="_blank" style="display: flex; align-items: center; background: #5865F2; padding: 6px 10px; border-radius: 6px; text-decoration: none; transition: transform 0.2s, background 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.background='#4752c4';" onmouseout="this.style.transform='translateY(0)'; this.style.background='#5865F2';">
+                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png" alt="Discord" style="height: 18px;">
+                </a>
+            </div>
+            <p style="opacity: 0.7; margin-top: 8px;">Killswitch: <strong>SHIFT+K</strong></p>
+            <p style="opacity: 0.45; margin-top: -8px; font-size: 0.8rem;">This archive is based off GoGuardian &mdash; The Killswitch redirects to Schoology.</p>
+        `;
+
+        function initializeSession() {
+            const gatekeeper = document.getElementById('gatekeeper');
+            
+            if (window.top === window.self) {
+                const targetBlankTab = window.open('about:blank', '_blank');
+                
+                if (targetBlankTab && !targetBlankTab.closed) {
+                    const targetDoc = targetBlankTab.document;
+                    
+                    const clone = document.documentElement.cloneNode(true);
+                    const clonedGatekeeper = clone.querySelector('#gatekeeper');
+                    if (clonedGatekeeper) clonedGatekeeper.remove();
+                    
+                    targetDoc.open();
+                    targetDoc.write('<!DOCTYPE html>\\n' + clone.outerHTML);
+                    targetDoc.close();
+                    
+                    window.location.replace("https://dublin.schoology.com/");
+                } else {
+                    showNotice();
+                }
+            }
+            gatekeeper.style.display = 'none';
+        }
+
+        function loadArchiveData() {
+            const btn = document.getElementById('reload-btn');
+            if(btn) { btn.classList.add('loading'); btn.innerText = '↻ Refreshing...'; }
+            
+            fetch(csvURL)
+                .then(response => response.text())
+                .then(data => {
+                    processData(data);
+                    if(btn) { btn.classList.remove('loading'); btn.innerText = '↻ Refresh Archive'; }
+                })
+                .catch(err => {
+                    console.error("Data load failed.", err);
+                    if(btn) { btn.classList.remove('loading'); btn.innerText = '↻ Refresh Archive'; }
+                });
+        }
+
+        function parseCSVLine(text) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === '"') {
+                    if (inQuotes && text[i+1] === '"') {
+                        current += '"'; i++; 
+                    } else {
+                        inQuotes = !inQuotes; 
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+
+        function processData(csv) {
+            const rows = csv.split('\n').slice(1);
+            const groups = {};
+
+            rows.forEach(row => {
+                if (!row.trim()) return; 
+                
+                const cols = parseCSVLine(row);
+                
+                if (cols.length >= 2) {
+                    const name = cols[0];
+                    const url = cols[1];
+                    
+                    if (!name || !url) return; 
+                    
+                    // Fixed Bug: Added .trim() to clean invisible formatting characters like \r
+                    let rawType = cols[2] ? cols[2].trim().toLowerCase() : "proxies"; 
+                    
+                    // Normalize singular terms
+                    if (rawType === 'proxy') rawType = 'proxies';
+                    if (rawType === 'game') rawType = 'games';
+                    
+                    const status = cols[3] ? cols[3].trim() : "";
+                    const discord = cols[4] ? cols[4].trim() : null;
+
+                    if (!groups[name]) { groups[name] = { links: [], discord: discord, type: rawType }; }
+                    groups[name].links.push({ url, status });
+                }
+            });
+
+            renderUI(groups);
+        }
+
+        function renderUI(groups) {
+            const mount = document.getElementById('dynamic-categories-mount');
+            mount.innerHTML = ""; // Clear existing blocks on refresh
+
+            const categoryHeadings = {};
+            const categoryContainers = {};
+
+            // Function to generate DOM elements for a category if it doesn't exist yet
+            function ensureCategoryExists(catName) {
+                if (!categoryContainers[catName]) {
+                    // Capitalize the first letter for the visual title
+                    const prettyName = catName.charAt(0).toUpperCase() + catName.slice(1);
+                    
+                    const heading = document.createElement('div');
+                    heading.className = 'section-heading';
+                    heading.innerHTML = ghostText(prettyName); // Obfuscate title
+                    
+                    const grid = document.createElement('div');
+                    grid.className = 'archive-grid';
+                    
+                    categoryHeadings[catName] = heading;
+                    categoryContainers[catName] = grid;
+                }
+            }
+
+            const sortedGroups = Object.entries(groups).sort((a, b) => {
+                return a[1].links.length - b[1].links.length;
+            });
+
+            for (const [name, data] of sortedGroups) {
+                const catName = data.type;
+                ensureCategoryExists(catName);
+
+                const bubble = document.createElement('div');
+                bubble.className = 'link-bubble';
+
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.innerHTML = `<strong>${ghostText(name)}</strong>`; // Obfuscate name
+
+                if (data.discord) {
+                    const dLink = document.createElement('a');
+                    dLink.href = data.discord; dLink.target = "_blank";
+                    dLink.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/2111/2111370.png" class="discord-icon" alt="Server Portal">`;
+                    header.appendChild(dLink);
+                }
+                bubble.appendChild(header);
+
+                const verticalBar = document.createElement('div');
+                verticalBar.className = 'vertical-badge';
+                verticalBar.innerHTML = `<div class="vertical-badge-text">${ghostText(catName)}</div>`;
+                bubble.appendChild(verticalBar);
+
+                data.links.forEach(linkItem => {
+                    const rowContainer = document.createElement('div');
+                    rowContainer.className = 'link-row-container';
+
+                    const row = document.createElement('a');
+                    row.className = 'mirror-row';
+                    row.onclick = (e) => { e.preventDefault(); openInSameTabFrame(linkItem.url); };
+
+                    const span = document.createElement('span');
+                    span.className = 'url-text'; 
+                    span.innerText = ghostText(linkItem.url); // Obfuscate URLs
+                    row.appendChild(span); rowContainer.appendChild(row);
+
+                    if (linkItem.status) {
+                        const badge = document.createElement('span');
+                        badge.className = 'status-badge';
+                        const statusText = linkItem.status.toLowerCase();
+                        if (statusText === 'unblocked') badge.classList.add('unblocked');
+                        else if (statusText === 'blocked') badge.classList.add('blocked');
+                        else if (statusText === 'inactive') badge.classList.add('inactive');
+                        else badge.classList.add('unknown');
+                        badge.innerText = linkItem.status;
+                        rowContainer.appendChild(badge);
+                    }
+
+                    bubble.appendChild(rowContainer);
+
+                    setTimeout(() => {
+                        const containerWidth = row.offsetWidth;
+                        const textWidth = span.scrollWidth; 
+                        if (textWidth > containerWidth) {
+                            const overflowDistance = textWidth - containerWidth;
+                            span.style.setProperty('--scroll-distance', `-${overflowDistance}px`);
+                            span.style.setProperty('--scroll-duration', (overflowDistance / 50) + 's');
+                        } else { span.style.animation = 'none'; }
+                    }, 50);
+                });
+
+                // Attach bubble to its dynamically matched category
+                categoryContainers[catName].appendChild(bubble);
+            }
+
+            // Output logic: Prioritize main categories, then inject any custom ones
+            const priority = ['proxies', 'games', 'entertainment'];
+            
+            // Render priority categories first
+            priority.forEach(cat => {
+                if (categoryContainers[cat]) {
+                    mount.appendChild(categoryHeadings[cat]);
+                    mount.appendChild(categoryContainers[cat]);
+                }
+            });
+
+            // Render any remaining custom categories created from the spreadsheet
+            Object.keys(categoryContainers).forEach(cat => {
+                if (!priority.includes(cat)) {
+                    mount.appendChild(categoryHeadings[cat]);
+                    mount.appendChild(categoryContainers[cat]);
+                }
+            });
+        }
+
+        function openInSameTabFrame(targetUrl) {
+            document.body.innerHTML = "";
+            document.documentElement.style.width = "100%"; document.documentElement.style.height = "100%";
+            document.body.style.margin = "0"; document.body.style.padding = "0";
+            document.body.style.width = "100%"; document.body.style.height = "100%";
+            document.body.style.overflow = "hidden"; document.body.style.background = "#fff";
+
+            const targetIFrame = document.createElement('iframe');
+            targetIFrame.src = targetUrl;
+            targetIFrame.style.border = "none"; targetIFrame.style.width = "100%"; targetIFrame.style.height = "100%"; targetIFrame.style.display = "block";
+            document.body.appendChild(targetIFrame);
+        }
+
+        function showArchive() { 
+            document.getElementById('view-decoy').style.display = 'none'; 
+            document.getElementById('view-archive').style.display = 'flex'; 
+            document.body.style.background = "#0b1622"; 
+            
+            setTimeout(() => {
+                document.querySelectorAll('.link-row-container').forEach(container => {
+                    const row = container.querySelector('.mirror-row');
+                    const span = container.querySelector('.url-text');
+                    if (row && span) {
+                        const containerWidth = row.offsetWidth;
+                        const textWidth = span.scrollWidth;
+                        if (textWidth > containerWidth) {
+                            const overflowDistance = textWidth - containerWidth;
+                            span.style.setProperty('--scroll-distance', `-${overflowDistance}px`);
+                            span.style.setProperty('--scroll-duration', (overflowDistance / 50) + 's');
+                            span.style.animation = '';
+                        } else {
+                            span.style.animation = 'none';
+                        }
+                    }
+                });
+            }, 50);
+        }
+        
+        function showHome() { document.getElementById('view-archive').style.display = 'none'; document.getElementById('view-decoy').style.display = 'flex'; document.body.style.background = "#ffffff"; }
+        function showNotice() { document.getElementById('pop-blocker-notice').style.display = 'flex'; }
+        function closeNotice() { document.getElementById('pop-blocker-notice').style.display = 'none'; }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.shiftKey && e.key === 'K') window.location.href = "https://dublin.schoology.com/";
+        });
+
+        window.addEventListener('beforeunload', function (e) {
+            if (canShowWarning) {
+                e.preventDefault();
+                e.returnValue = 'Changes you made may not be saved.';
+                return 'Changes you made may not be saved.';
+            }
+        });
+    </script>
+</body>
+</html>
             --primary: #1e3a5f; 
             --accent: #26b1a5;  
             --bg: #ffffff;
