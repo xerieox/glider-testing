@@ -276,13 +276,13 @@
             </div>
         </div>
         
-        <div class="section-heading" id="proxy-title-mount">Proxies</div>
+        <!-- ZERO-WIDTH OBFUSCATION ON HARDCODED TITLES -->
+        <div class="section-heading" id="proxy-title-mount">P&#8203;r&#8203;o&#8203;x&#8203;i&#8203;e&#8203;s</div>
+        <div class="section-heading" id="game-title-mount">G&#8203;a&#8203;m&#8203;e&#8203;s</div>
+        <div class="section-heading" id="entertainment-title-mount">E&#8203;n&#8203;t&#8203;e&#8203;r&#8203;t&#8203;a&#8203;i&#8203;n&#8203;m&#8203;e&#8203;n&#8203;t</div>
+        
         <div class="archive-grid" id="proxies-container"></div>
-        
-        <div class="section-heading" id="game-title-mount">Games</div>
         <div class="archive-grid" id="games-container"></div>
-        
-        <div class="section-heading" id="entertainment-title-mount">Entertainment</div>
         <div class="archive-grid" id="entertainment-container"></div>
     </div>
 
@@ -295,10 +295,13 @@
     <script>
         const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRyvaLgrLVFhevnLqlWfsLdPaQwkMmRbNDR1y2f0mD-jvM5a3qsuhWzMwKJMhWdPZI-orVG2nYAp59d/pub?output=csv";
         
-        // Dynamically enable the warning ONLY if the script is running inside the about:blank page
         let canShowWarning = (window.location.href === 'about:blank' || window.location.protocol === 'about:');
 
-        // 1. Setup Headers
+        // NEW: Function to inject zero-width spaces into text to break up string-matching filters
+        function ghostText(str) {
+            return str.split('').join('\u200B');
+        }
+
         const safeDecode = (str) => atob(str);
         document.getElementById('header-mount').innerHTML = `
             <div style="display: flex; align-items: center; gap: 15px;">
@@ -311,7 +314,6 @@
             <p style="opacity: 0.45; margin-top: -8px; font-size: 0.8rem;">This archive is based off GoGuardian &mdash; The Killswitch redirects to Schoology.</p>
         `;
 
-        // 2. Click-to-Launch Gatekeeper Logic
         function initializeSession() {
             const gatekeeper = document.getElementById('gatekeeper');
             
@@ -321,17 +323,14 @@
                 if (targetBlankTab && !targetBlankTab.closed) {
                     const targetDoc = targetBlankTab.document;
                     
-                    // Securely clone the DOM and strip the gatekeeper
                     const clone = document.documentElement.cloneNode(true);
                     const clonedGatekeeper = clone.querySelector('#gatekeeper');
                     if (clonedGatekeeper) clonedGatekeeper.remove();
                     
                     targetDoc.open();
-                    // Fix: Restored the !DOCTYPE declaration here so about:blank doesn't zoom in!
                     targetDoc.write('<!DOCTYPE html>\\n' + clone.outerHTML);
                     targetDoc.close();
                     
-                    // Redirect original tab
                     window.location.replace("https://dublin.schoology.com/");
                 } else {
                     showNotice();
@@ -340,7 +339,6 @@
             gatekeeper.style.display = 'none';
         }
 
-        // 3. Data Fetching
         function loadArchiveData() {
             const btn = document.getElementById('reload-btn');
             if(btn) { btn.classList.add('loading'); btn.innerText = '↻ Refreshing...'; }
@@ -357,7 +355,6 @@
                 });
         }
 
-        // Custom CSV Parser to replace the crashing Regex
         function parseCSVLine(text) {
             const result = [];
             let current = '';
@@ -366,9 +363,9 @@
                 const char = text[i];
                 if (char === '"') {
                     if (inQuotes && text[i+1] === '"') {
-                        current += '"'; i++; // Handle escaped quotes
+                        current += '"'; i++; 
                     } else {
-                        inQuotes = !inQuotes; // Toggle quote state
+                        inQuotes = !inQuotes; 
                     }
                 } else if (char === ',' && !inQuotes) {
                     result.push(current.trim());
@@ -386,16 +383,15 @@
             const groups = {};
 
             rows.forEach(row => {
-                if (!row.trim()) return; // Skip completely blank lines
+                if (!row.trim()) return; 
                 
-                // Safely parse without regular expressions
                 const cols = parseCSVLine(row);
                 
                 if (cols.length >= 2) {
                     const name = cols[0];
                     const url = cols[1];
                     
-                    if (!name || !url) return; // Prevent creating empty entries
+                    if (!name || !url) return; 
                     
                     const rawType = cols[2] ? cols[2].toLowerCase() : "proxy"; 
                     const status = cols[3] ? cols[3] : "";
@@ -425,7 +421,8 @@
 
                 const header = document.createElement('div');
                 header.className = 'category-header';
-                header.innerHTML = `<strong>${name}</strong>`;
+                // ZERO-WIDTH OBFUSCATION ON TITLES
+                header.innerHTML = `<strong>${ghostText(name)}</strong>`;
 
                 if (data.discord) {
                     const dLink = document.createElement('a');
@@ -438,7 +435,8 @@
                 const verticalBar = document.createElement('div');
                 verticalBar.className = 'vertical-badge';
                 const cleanTypeDisplay = (data.type === 'game' || data.type === 'games') ? 'games' : (data.type === 'entertainment') ? 'entertainment' : 'proxies';
-                verticalBar.innerHTML = `<div class="vertical-badge-text">${cleanTypeDisplay}</div>`;
+                // ZERO-WIDTH OBFUSCATION ON BADGES
+                verticalBar.innerHTML = `<div class="vertical-badge-text">${ghostText(cleanTypeDisplay)}</div>`;
                 bubble.appendChild(verticalBar);
 
                 data.links.forEach(linkItem => {
@@ -450,7 +448,9 @@
                     row.onclick = (e) => { e.preventDefault(); openInSameTabFrame(linkItem.url); };
 
                     const span = document.createElement('span');
-                    span.className = 'url-text'; span.innerText = linkItem.url;
+                    span.className = 'url-text'; 
+                    // ZERO-WIDTH OBFUSCATION ON THE URLs THEMSELVES
+                    span.innerText = ghostText(linkItem.url);
                     row.appendChild(span); rowContainer.appendChild(row);
 
                     if (linkItem.status) {
@@ -461,6 +461,7 @@
                         else if (statusText === 'blocked') badge.classList.add('blocked');
                         else if (statusText === 'inactive') badge.classList.add('inactive');
                         else badge.classList.add('unknown');
+                        // Status text is usually safe, but we can ghost it too if needed. Leaving un-ghosted for CSS matching.
                         badge.innerText = linkItem.status;
                         rowContainer.appendChild(badge);
                     }
@@ -484,7 +485,6 @@
             }
         }
 
-        // 4. Utilities
         function openInSameTabFrame(targetUrl) {
             document.body.innerHTML = "";
             document.documentElement.style.width = "100%"; document.documentElement.style.height = "100%";
@@ -503,7 +503,6 @@
             document.getElementById('view-archive').style.display = 'flex'; 
             document.body.style.background = "#0b1622"; 
             
-            // Re-trigger width calculations the moment the view enters 'display: flex'
             setTimeout(() => {
                 document.querySelectorAll('.link-row-container').forEach(container => {
                     const row = container.querySelector('.mirror-row');
@@ -515,7 +514,7 @@
                             const overflowDistance = textWidth - containerWidth;
                             span.style.setProperty('--scroll-distance', `-${overflowDistance}px`);
                             span.style.setProperty('--scroll-duration', (overflowDistance / 50) + 's');
-                            span.style.animation = ''; // Ensures animation is properly applied
+                            span.style.animation = '';
                         } else {
                             span.style.animation = 'none';
                         }
@@ -528,7 +527,6 @@
         function showNotice() { document.getElementById('pop-blocker-notice').style.display = 'flex'; }
         function closeNotice() { document.getElementById('pop-blocker-notice').style.display = 'none'; }
 
-        // 5. Global Event Listeners
         window.addEventListener('keydown', (e) => {
             if (e.shiftKey && e.key === 'K') window.location.href = "https://dublin.schoology.com/";
         });
